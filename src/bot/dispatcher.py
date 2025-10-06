@@ -1,16 +1,20 @@
 from aiogram import Dispatcher
 from aiogram.types import ErrorEvent
 
+from src.i18n.i18n import I18n
 from src.logger import LogWriter, LogInfo
 
-from bot.routers import routers
+from src.bot.routers import routers
+from src.bot.middlewares import I18nMiddleware
 
-
-def get_dispatcher(logger: LogWriter, include: Dispatcher = None) -> Dispatcher:
+def get_dispatcher(logger: LogWriter, i18n: I18n, include: Dispatcher = None) -> Dispatcher:
     """This function set up dispatcher with routers, filters and middlewares."""
     dp = include if include else Dispatcher()
     for router in routers:
         dp.include_router(router)
+
+    # Register middlewares
+    dp.update.middleware(I18nMiddleware(i18n))
 
     @dp.error()
     async def errors_handler(error_update: ErrorEvent):

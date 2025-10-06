@@ -7,7 +7,7 @@ from src.logger import LogInfo
 from src.config import config
 
 async def main():
-    dp = get_dispatcher(config.logger, config.dp)
+    dp = get_dispatcher(config.logger, config.i18n, config.dp)
 
     await config.start()
     try:

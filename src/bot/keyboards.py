@@ -1,17 +1,14 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-CAMERAS_BT = "📷 Cameras"
-WEIGHTS_BT = "⚖️ Weights"
-RECORDS_BT = "🔴 Records"
-INFERENCE_BT = "🔮 Inference"
-TRAIN_BT = "🚂 Train"
-SETTINGS_BT = "⚙️ Settings"
+from src.i18n.types import Translator
 
-main_rkb = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=CAMERAS_BT), KeyboardButton(text=WEIGHTS_BT)],
-        [KeyboardButton(text=RECORDS_BT), KeyboardButton(text=INFERENCE_BT)],
-        [KeyboardButton(text=TRAIN_BT), KeyboardButton(text=SETTINGS_BT)]
-    ],
-    resize_keyboard=True
-)
+
+def main_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.cameras", lang)), KeyboardButton(text=t("b.weights", lang))],
+            [KeyboardButton(text=t("b.records", lang)), KeyboardButton(text=t("b.inference", lang))],
+            [KeyboardButton(text=t("b.train", lang)), KeyboardButton(text=t("b.settings", lang))]
+        ],
+        resize_keyboard=True
+    )

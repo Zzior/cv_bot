@@ -9,6 +9,9 @@ from aiogram.client.default import DefaultBotProperties
 
 from src.logger import LogWriter
 
+from src.i18n.i18n import I18n
+from src.i18n.languages import en
+
 class Config:
     def __init__(self):
         self.tasks = []
@@ -20,6 +23,12 @@ class Config:
         self.logger = LogWriter(self.storage_dir / "logs/app.log")
 
         # env
+        self.default_language = getenv("DEFAULT_LANGUAGE")
+        self.i18n = I18n(
+            {"en": en.TEXTS},
+            self.default_language
+        )
+
         self.token = getenv("BOT_TOKEN")
         self.log_chat_id = getenv("LOG_CHAT_ID")
 
