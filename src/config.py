@@ -1,48 +1,50 @@
-import asyncio
 from os import getenv
 from pathlib import Path
-
 from dotenv import load_dotenv
+from dataclasses import dataclass
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
+from sqlalchemy.engine import URL
 
-from src.logger import LogWriter
+project_dir = Path(__file__).parent.parent
+load_dotenv(project_dir / ".env")
 
-from src.i18n.i18n import I18n
-from src.i18n.languages import en
+@dataclass
+class DatabaseConfig:
+    name: str | None = getenv("POSTGRES_DATABASE")
+    user: str | None = getenv("POSTGRES_USER")
+    passwd: str | None = getenv("POSTGRES_PASSWORD", None)
+    port: int = int(getenv("POSTGRES_PORT", 5432))
+    host: str = getenv("POSTGRES_HOST", "db")
 
+    driver: str = "asyncpg"
+    database_system: str = "postgresql"
+
+    def build_connection_str(self) -> str:
+        return URL.create(
+            drivername=f"{self.database_system}+{self.driver}",
+            username=self.user,
+            database=self.name,
+            password=self.passwd,
+            port=self.port,
+            host=self.host,
+        ).render_as_string(hide_password=False)
+
+
+@dataclass
+class BotConfig:
+    token: str = getenv("BOT_TOKEN")
+
+
+@dataclass
+class LanguageConfig:
+    default_language: str = getenv("DEFAULT_LANGUAGE")
+
+
+@dataclass
 class Config:
-    def __init__(self):
-        self.tasks = []
-        self.app_dir = Path(__file__).parent.parent
-        self.storage_dir = self.app_dir / "storage"
-
-        load_dotenv(self.app_dir / ".env")
-
-        self.logger = LogWriter(self.storage_dir / "logs/app.log")
-
-        # env
-        self.default_language = getenv("DEFAULT_LANGUAGE")
-        self.i18n = I18n(
-            {"en": en.TEXTS},
-            self.default_language
-        )
-
-        self.token = getenv("BOT_TOKEN")
-        self.log_chat_id = getenv("LOG_CHAT_ID")
-
-        self.dp = Dispatcher()
-        self.bot = Bot(token=self.token, default=DefaultBotProperties(parse_mode="HTML"))
-
-        self.logger.setup_bot(self.bot, self.log_chat_id)
-
-    async def start(self):
-        log_listen = asyncio.create_task(self.logger.listen_queue())
-
-        self.tasks.append(log_listen)
-
-    async def stop(self):
-        self.logger.stop()
+    project_dir = project_dir
+    language = LanguageConfig()
+    db = DatabaseConfig()
+    bot = BotConfig()
 
 config = Config()
