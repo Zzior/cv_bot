@@ -43,6 +43,7 @@ class LanguageConfig:
 @dataclass
 class Config:
     project_dir = project_dir
+    storage_dir = project_dir / "storage"
     language = LanguageConfig()
     db = DatabaseConfig()
     bot = BotConfig()

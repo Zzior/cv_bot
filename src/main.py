@@ -17,7 +17,7 @@ from src.app import App, set_app
 
 
 async def main():
-    logger = LogWriter(config.project_dir / "logs" / "bot.log")
+    logger = LogWriter(config.storage_dir / "logs" / "bot.log")
     db = DatabaseProvider(config.db.build_connection_str())
     i18n = I18n(
         {"en": en.TEXTS},
