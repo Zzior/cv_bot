@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,6 +32,11 @@ class CameraRepo:
             raise NotFoundError(f"Camera id: {id_} not found")
 
         return camera
+
+    async def all(self) -> Sequence[Camera]:
+        query = select(Camera).order_by(Camera.name)
+        cameras = await self.session.execute(query)
+        return cameras.scalars().all()
 
     async def get_by_name(self, name: str) -> Camera | None:
         query = select(Camera).where(
