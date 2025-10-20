@@ -1,3 +1,4 @@
-from .i18n_mw import I18nMiddleware
+from .app import AppMiddleware
+from .language import LanguageMiddleware
 
-__all__ = ["I18nMiddleware"]
+__all__ = ["AppMiddleware", "LanguageMiddleware"]

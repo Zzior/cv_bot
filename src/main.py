@@ -17,15 +17,13 @@ from src.app import App, set_app
 
 
 async def main():
+    bot = Bot(token=config.bot.token, default=DefaultBotProperties(parse_mode="HTML"))
     logger = LogWriter(config.storage_dir / "logs" / "bot.log")
     db = DatabaseProvider(config.db.build_connection_str())
     i18n = I18n(
         {"en": en.TEXTS},
         config.language.default_language
     )
-
-    bot = Bot(token=config.bot.token, default=DefaultBotProperties(parse_mode="HTML"))
-    dp = get_dispatcher(logger, i18n)
 
     app = App(
         config=config,
@@ -35,6 +33,7 @@ async def main():
         db=db
     )
     set_app(app)
+    dp = get_dispatcher(logger, app, i18n)
 
     try:
         await dp.start_polling(app.bot)

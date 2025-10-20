@@ -2,12 +2,11 @@ from typing import Dict, Any, Awaitable, Callable
 
 from aiogram import BaseMiddleware, types
 
+from src.app import App
 
-from src.i18n.i18n import I18n
-
-class I18nMiddleware(BaseMiddleware):
-    def __init__(self, i18n: I18n):
-        self.i18n = i18n
+class AppMiddleware(BaseMiddleware):
+    def __init__(self, app: App):
+        self.app = app
 
     async def __call__(
             self,
@@ -15,9 +14,5 @@ class I18nMiddleware(BaseMiddleware):
             event: types.update.Update,
             data: Dict[str, Any],
     ) -> Any:
-        # TO DO add multilanguage
-
-        data["t"] = self.i18n.get_text
-        data["lang"] = self.i18n.default_language
-
+        data["app"] = self.app
         return await handler(event, data)
