@@ -13,6 +13,11 @@ class Camera:
         if not parsed.hostname:
             return False
 
+        try:
+            _ = parsed.port
+        except ValueError:
+            return False
+
         if not parsed.port:
             if parsed.scheme in ("rtsp", "rtsps"):
                 port = 554
