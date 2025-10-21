@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from ..states import BotState
-from ..keyboards import back_rkb
+from ..keyboards import back_rkb, camera_rkb
 from ..navigation import to_main_menu, to_cameras
 
 from src.services.camera import Camera
@@ -14,7 +14,7 @@ from src.i18n.types import Translator
 camera_router = Router(name="camera")
 
 
-@camera_router.message(BotState.cameras)
+@camera_router.message(BotState.cameras_list)
 async def cameras_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     data = await state.get_data()
 
@@ -22,7 +22,9 @@ async def cameras_handler(message: Message, state: FSMContext, t: Translator, la
         await to_main_menu(message, state, t, lang)
 
     elif message.text in data["cameras"]:
-        await message.answer("TODO camera view")
+        await state.set_data({"camera_id": data["cameras"][message.text]})
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
 
     elif message.text == t("b.add", lang):
         await message.answer(t("cameras.add_name", lang), reply_markup=back_rkb(t, lang))
@@ -86,3 +88,36 @@ async def cameras_add_source_handler(message: Message, state: FSMContext, t: Tra
 
     else:
         await message.answer("❗️" + t("cameras.add_source", lang))
+
+
+@camera_router.message(BotState.camera)
+async def camera_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await to_cameras(message, state, t, lang, app)
+
+    elif message.text == t("b.rename", lang):
+        await message.answer("TODO")
+    elif message.text == t("b.source", lang):
+        await message.answer("TODO")
+    elif message.text == t("b.roi", lang):
+        await message.answer("TODO")
+    elif message.text == t("b.picture", lang):
+        await message.answer("TODO")
+
+    elif message.text == t("b.ping", lang):
+        await ping_camera(message, state, t, lang, app)
+
+    else:
+        await message.answer(t("choose", lang))
+
+
+async def ping_camera(message: Message, state: FSMContext, t: Translator, lang: str, app: App):
+    data = await state.get_data()
+    async with app.db.session() as db:
+        camera = await db.camera.get(data["camera_id"])
+        source = camera.source
+
+    if await Camera(source).ping():
+        await message.answer(t("pong", lang))
+    else:
+        await message.answer(t("ping_error", lang))

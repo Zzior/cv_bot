@@ -10,10 +10,18 @@ TEXTS = {
     "b.train": "🚂 Train",
     "b.settings": "⚙️ Settings",
 
+    "b.rename": "✏️ Rename",
+    "b.source": "🔗 Source",
+    "b.roi": "🎯 ROI",
+    "b.picture": "📸 Picture",
+    "b.ping": "🔴 Ping",
+
     "b.now": "Now",
 
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
+    "pong": "🟢 Pong",
+    "ping_error": "🔴 Ping error",
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
