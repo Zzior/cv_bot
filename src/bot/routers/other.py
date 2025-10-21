@@ -6,7 +6,7 @@ from src.bot.routers.commands import start_command
 
 from src.i18n.types import Translator
 
-other_router = Router(name='other')
+other_router = Router(name="other")
 
 
 # state not found

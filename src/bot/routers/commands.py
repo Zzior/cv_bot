@@ -7,7 +7,7 @@ from src.bot.navigation import to_main_menu
 
 from src.i18n.types import Translator
 
-commands_router = Router(name='commands')
+commands_router = Router(name="commands")
 
 
 @commands_router.message(CommandStart())
