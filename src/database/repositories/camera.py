@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, exists, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.errors.database import NotFoundError
@@ -22,6 +22,15 @@ class CameraRepo:
         self.session.add(camera)
         await self.session.flush()
         return camera
+
+    async def check_to_add(self, name: str, source: str):
+        query = select(
+            exists().where(
+                or_(Camera.name == name, Camera.source == source)
+            )
+        )
+        result = await self.session.execute(query)
+        return not result.scalar()
 
     async def get(self, id_: int) -> Camera | None:
         return await self.session.get(Camera, id_)
