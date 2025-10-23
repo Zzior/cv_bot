@@ -11,7 +11,7 @@ def main_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
         keyboard=[
             [KeyboardButton(text=t("b.cameras", lang)), KeyboardButton(text=t("b.weights", lang))],
             [KeyboardButton(text=t("b.records", lang)), KeyboardButton(text=t("b.inference", lang))],
-            [KeyboardButton(text=t("b.train", lang)), KeyboardButton(text=t("b.settings", lang))]
+            [KeyboardButton(text=t("b.dataset", lang)), KeyboardButton(text=t("b.settings", lang))]
         ],
         resize_keyboard=True
     )

@@ -7,7 +7,7 @@ TEXTS = {
     "b.weights": "⚖️ Weights",
     "b.records": "🔴 Records",
     "b.inference": "🔮 Inference",
-    "b.train": "🚂 Train",
+    "b.dataset": "🧩 Dataset",
     "b.settings": "⚙️ Settings",
 
     "b.rename": "✏️ Rename",
