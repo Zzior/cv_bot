@@ -1,4 +1,6 @@
+import sys
 import asyncio
+from pathlib import Path
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -6,6 +8,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+
+src_path = Path(__file__).parent.parent / "src"
+sys.path.append(str(src_path))
 
 from config import config as project_config
 from database import Base
