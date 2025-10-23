@@ -1,6 +1,8 @@
 import asyncio
 from urllib.parse import urlparse
 
+import cv2
+
 
 class Camera:
     def __init__(self, source: str, roi: list[list[int]] | None = None, timeout_s: float = 5.0):
@@ -40,3 +42,18 @@ class Camera:
         except Exception as e:
             _ = e
             return False
+
+    def picture(self) -> bytes | None:
+        capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG)
+        if not capture.isOpened():
+            return None
+
+        status, frame = capture.read()
+        if not status:
+            return None
+
+        status, jpeg = cv2.imencode(".jpg", frame)
+        if not status:
+            return None
+
+        return jpeg.tobytes()

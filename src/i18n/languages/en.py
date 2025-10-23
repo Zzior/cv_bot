@@ -20,8 +20,7 @@ TEXTS = {
 
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
-    "pong": "🟢 Pong",
-    "ping_error": "🔴 Ping error",
+    "loading": "ℹ️ Loading ...",
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
@@ -31,6 +30,11 @@ TEXTS = {
     "cameras.not_work": "❗️The camera is not working",
     "cameras.add_error": "❗️Error adding a camera",
     "cameras.added": "✅ Camera added successfully",
+
+    "cameras.pong": "🟢 Pong",
+    "cameras.ping_error": "🔴 Ping error",
+
+    "cameras.picture_error": "❗️Error capturing photo",
 
     "records": "Choose a camera or enter a source",
     "records.start": "Enter the start time",

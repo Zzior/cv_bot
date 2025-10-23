@@ -1,15 +1,17 @@
+import asyncio
+
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, BufferedInputFile
 
-from ..states import BotState
-from ..keyboards import back_rkb, camera_rkb
-from ..navigation import to_main_menu, to_cameras
+from bot.states import BotState
+from bot.keyboards import back_rkb, camera_rkb
+from bot.navigation import to_main_menu, to_cameras
 
-from src.services.camera import Camera
+from services.camera import Camera
 
-from src.app import App
-from src.i18n.types import Translator
+from app import App
+from i18n.types import Translator
 
 camera_router = Router(name="camera")
 
@@ -102,22 +104,37 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
     elif message.text == t("b.roi", lang):
         await message.answer("TODO")
     elif message.text == t("b.picture", lang):
-        await message.answer("TODO")
+        await camera_picture(message, state, t, lang, app)
 
     elif message.text == t("b.ping", lang):
-        await ping_camera(message, state, t, lang, app)
+        await camera_ping(message, state, t, lang, app)
 
     else:
         await message.answer(t("choose", lang))
 
 
-async def ping_camera(message: Message, state: FSMContext, t: Translator, lang: str, app: App):
+async def camera_ping(message: Message, state: FSMContext, t: Translator, lang: str, app: App):
     data = await state.get_data()
     async with app.db.session() as db:
         camera = await db.camera.get(data["camera_id"])
         source = camera.source
 
     if await Camera(source).ping():
-        await message.answer(t("pong", lang))
+        await message.answer(t("cameras.pong", lang))
     else:
-        await message.answer(t("ping_error", lang))
+        await message.answer(t("cameras.ping_error", lang))
+
+async def camera_picture(message: Message, state: FSMContext, t: Translator, lang: str, app: App):
+    await message.answer(t("loading", lang))
+
+    data = await state.get_data()
+    async with app.db.session() as db:
+        camera = await db.camera.get(data["camera_id"])
+        source = camera.source
+
+    camera = Camera(source)
+    pic = await asyncio.to_thread(camera.picture)
+    if pic:
+        await message.answer_photo(BufferedInputFile(pic, "picture.jpg"))
+    else:
+        await message.answer(t("cameras.picture_error", lang))
