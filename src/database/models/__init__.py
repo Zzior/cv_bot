@@ -1,5 +1,5 @@
 from .base import Base
 from .camera import Camera
-from .record import Record
+from .task import Task
 
-__all__ = ("Base", "Camera", "Record")
+__all__ = ("Base", "Camera", "Task")
