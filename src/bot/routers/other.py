@@ -2,9 +2,9 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from src.bot.routers.commands import start_command
+from ..routers.commands import start_command
 
-from src.i18n.types import Translator
+from i18n.types import Translator
 
 other_router = Router(name="other")
 

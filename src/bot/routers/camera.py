@@ -4,9 +4,9 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, BufferedInputFile
 
-from bot.states import BotState
-from bot.keyboards import back_rkb, camera_rkb
-from bot.navigation import to_main_menu, to_cameras
+from ..states import BotState
+from ..keyboards import back_rkb, camera_rkb
+from ..navigation import to_main_menu, to_cameras
 
 from services.camera import Camera
 

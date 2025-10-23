@@ -4,8 +4,8 @@ from aiogram.types import Message
 from .states import BotState
 from .keyboards import main_rkb, cameras_list_rkb
 
-from src.app import App
-from src.i18n.types import Translator
+from app import App
+from i18n.types import Translator
 
 async def to_main_menu(message: Message, state: FSMContext, t: Translator, lang: str, send_msg: str = None) -> None:
     await state.clear()

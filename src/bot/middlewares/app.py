@@ -2,7 +2,7 @@ from typing import Dict, Any, Awaitable, Callable
 
 from aiogram import BaseMiddleware, types
 
-from src.app import App
+from app import App
 
 class AppMiddleware(BaseMiddleware):
     def __init__(self, app: App):

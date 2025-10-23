@@ -12,8 +12,8 @@ class Record:
 
     @staticmethod
     def run(params: dict, stop: Event) -> None:
-        from ..base.video_reader.node import VideoReader
-        from ..base.video_writer.node import VideoWriter
+        from services.base.video_reader.node import VideoReader
+        from services.base.video_writer.node import VideoWriter
 
         params_obj = RecordConf.model_validate(params)
         reader = VideoReader(params_obj.reader)

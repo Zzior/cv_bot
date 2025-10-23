@@ -3,7 +3,7 @@ from typing import Sequence
 from sqlalchemy import select, exists, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.errors.database import NotFoundError
+from errors.database import NotFoundError
 
 from ..models import Camera
 

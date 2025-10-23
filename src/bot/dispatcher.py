@@ -1,12 +1,12 @@
 from aiogram import Dispatcher
 from aiogram.types import ErrorEvent
 
-from src.app import App
-from src.i18n.i18n import I18n
-from src.logger import LogWriter, LogInfo
+from app import App
+from i18n.i18n import I18n
+from logger import LogWriter, LogInfo
 
-from src.bot.routers import routers
-from src.bot.middlewares import AppMiddleware, LanguageMiddleware
+from .routers import routers
+from .middlewares import AppMiddleware, LanguageMiddleware
 
 def get_dispatcher(logger: LogWriter, app: App, i18n: I18n, include: Dispatcher = None) -> Dispatcher:
     dp = include if include else Dispatcher()

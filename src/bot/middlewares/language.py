@@ -3,7 +3,7 @@ from typing import Dict, Any, Awaitable, Callable
 from aiogram import BaseMiddleware, types
 
 
-from src.i18n.i18n import I18n
+from i18n.i18n import I18n
 
 class LanguageMiddleware(BaseMiddleware):
     def __init__(self, i18n: I18n):

@@ -1,9 +1,12 @@
 from typing import Generator
 
 import cv2
-import numpy as np
 
 from .conf import VideoReaderConf
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import numpy as np
 
 
 class VideoReader:
@@ -23,7 +26,7 @@ class VideoReader:
 
         return False
 
-    def process(self) -> Generator[np.ndarray, None, None]:
+    def process(self) -> Generator["np.ndarray", None, None]:
         self._connect_to_stream()
 
         try:

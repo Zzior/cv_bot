@@ -1,9 +1,9 @@
 from collections.abc import Iterable
 
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from src.i18n.types import Translator
+from i18n.types import Translator
 
 
 def main_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:

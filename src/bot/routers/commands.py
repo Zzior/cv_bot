@@ -3,9 +3,9 @@ from aiogram.types import Message
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
-from src.bot.navigation import to_main_menu
+from ..navigation import to_main_menu
 
-from src.i18n.types import Translator
+from i18n.types import Translator
 
 commands_router = Router(name="commands")
 

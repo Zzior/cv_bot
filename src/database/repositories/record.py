@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.errors.database import NotFoundError
+from errors.database import NotFoundError
 
 from ..models import Record
 

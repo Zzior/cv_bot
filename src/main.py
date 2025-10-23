@@ -4,16 +4,16 @@ from logging import INFO
 from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 
-from src.logger import LogInfo, LogWriter
+from logger import LogInfo, LogWriter
 
-from src.bot.dispatcher import get_dispatcher
-from src.database.database import DatabaseProvider
+from bot.dispatcher import get_dispatcher
+from database.database import DatabaseProvider
 
-from src.i18n.i18n import I18n
-from src.i18n.languages import en
+from i18n.i18n import I18n
+from i18n.languages import en
 
-from src.config import config
-from src.app import App, set_app
+from config import config
+from app import App, set_app
 
 
 async def main():

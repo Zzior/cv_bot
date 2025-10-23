@@ -2,11 +2,11 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from src.bot.states import BotState
-from src.bot.navigation import to_cameras
+from ..states import BotState
+from ..navigation import to_cameras
 
-from src.app import App
-from src.i18n.types import Translator
+from app import App
+from i18n.types import Translator
 
 menu_router = Router(name="user")
 

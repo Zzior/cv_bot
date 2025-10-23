@@ -3,10 +3,12 @@ from zoneinfo import ZoneInfo
 from pathlib import Path
 
 import av
-import numpy as np
 
 from .conf import VideoWriterConf
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import numpy as np
 
 class VideoWriter:
     def __init__(self, params: VideoWriterConf):
@@ -33,7 +35,7 @@ class VideoWriter:
         self.stream.pix_fmt = self.params.pix_fmt
         self.stream.bit_rate = self.params.bitrate
 
-    def write(self, frame: np.ndarray) -> None:
+    def write(self, frame: "np.ndarray") -> None:
         if self.container is None:
             self._create_new_writer(frame.shape)
 

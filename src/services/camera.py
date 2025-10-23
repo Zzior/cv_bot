@@ -1,8 +1,6 @@
 import asyncio
 from urllib.parse import urlparse
 
-import cv2
-
 
 class Camera:
     def __init__(self, source: str, roi: list[list[int]] | None = None, timeout_s: float = 5.0):
@@ -44,6 +42,8 @@ class Camera:
             return False
 
     def picture(self) -> bytes | None:
+        import cv2
+
         capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG)
         if not capture.isOpened():
             return None
