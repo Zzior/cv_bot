@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class VideoWriterConf(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
     fps: int
     save_dir: str
 

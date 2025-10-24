@@ -1,12 +1,14 @@
 from multiprocessing import Process, Event, get_context
 
 from .conf import RecordConf
+from ..base.abc.task import Task
 
-class Record:
+
+class Record(Task):
     def __init__(self, params: RecordConf):
         self.params = params
 
-        self.ctx = get_context('spawn')
+        self.ctx = get_context("spawn")
         self.stop_event: Event = self.ctx.Event()
         self.process: Process | None = None
 
