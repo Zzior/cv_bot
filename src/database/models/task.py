@@ -11,5 +11,4 @@ class Task(Base):
 
     start_time: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), nullable=False)
     end_time: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), nullable=False)
-    type: Mapped[str] = mapped_column(sa.String(32), nullable=False, unique=False)
     params: Mapped[dict] = mapped_column(sa.JSON, default=dict, nullable=False, unique=False)

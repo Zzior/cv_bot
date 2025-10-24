@@ -34,7 +34,6 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('start_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('end_time', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('type', sa.String(length=32), nullable=False),
     sa.Column('params', sa.JSON(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_tasks'))
     )
