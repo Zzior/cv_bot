@@ -13,11 +13,10 @@ class TaskRepo:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def new(self, start: datetime, end: datetime, task_type: str, params: dict) -> Task:
+    async def new(self, start: datetime, end: datetime, params: dict) -> Task:
         task = Task(
             start_time=start,
             end_time=end,
-            type=task_type,
             params=params,
         )
 
