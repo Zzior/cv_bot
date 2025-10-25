@@ -26,6 +26,8 @@ class TaskInfo:
     task_id: int
     task_type: str
 
+    conf: TaskConf
+
     start_time: datetime
     end_time: datetime
 
@@ -83,7 +85,7 @@ class TaskManager:
                 task_id = db_task.id
 
         task = self._build_task(conf)
-        self.tasks[task_id] = TaskInfo(task, task_id, conf.kind, start, end)
+        self.tasks[task_id] = TaskInfo(task, task_id, conf.kind, conf, start, end)
         if now >= start:
             task.start()
         else:
@@ -103,6 +105,18 @@ class TaskManager:
             await db.task.delete(task_id)
 
         task.task.stop()
+
+    def get_tasks(self, task_type: str | None = None) -> list[TaskInfo]:
+        results = []
+        if task_type:
+            for task_id, task_info in self.tasks.items():
+                if task_type == task_info.task_type:
+                    results.append(task_info)
+        else:
+            for task_id, task_info in self.tasks.items():
+                results.append(task_info)
+
+        return results
 
     async def load_tasks(self):
         now = datetime.now(timezone.utc)
