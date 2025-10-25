@@ -76,6 +76,6 @@ async def to_records(message: Message, state: FSMContext, t: Translator, lang: s
     else:
         msg = t("choose", lang)
 
-    await state.set_data({"records": records})
+    await state.set_data({"records": tasks_ids})
     await state.set_state(BotState.records_list)
     await message.answer(msg, reply_markup=build_rkb(t, lang, tasks_ids, adjust=3, add=True))
