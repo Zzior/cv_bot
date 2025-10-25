@@ -2,6 +2,7 @@ TEXTS = {
     "b.back": "◀️ Back",
     "b.add": "➕ Add",
     "b.skip": "⏩ Skip",
+    "b.stop": "🛑 Stop",
 
     "b.cameras": "📷 Cameras",
     "b.weights": "⚖️ Weights",
@@ -36,6 +37,8 @@ TEXTS = {
     "cameras.ping_error": "🔴 Ping error",
 
     "cameras.picture_error": "❗️Error capturing photo",
+
+    "task.canceled": "✅ The task has been canceled",
 
     "records": "Choose a camera or enter a source",
     "records.info_frm": "<b>{id}. {camera_name}</b>\n"
