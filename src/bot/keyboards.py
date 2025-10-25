@@ -24,16 +24,21 @@ def back_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     )
 
 
-def cameras_list_rkb(t: Translator, lang: str, cameras: Iterable[str]) -> ReplyKeyboardMarkup:
+def build_rkb(
+        t: Translator, lang: str, buttons: Iterable[str],
+        adjust: int = 2, back: bool = True
+) -> ReplyKeyboardMarkup:
+
     result = ReplyKeyboardBuilder()
     result.add(KeyboardButton(text=t("b.add", lang)))
 
-    for camera in cameras:
-        result.add(KeyboardButton(text=camera))
+    for button in buttons:
+        result.add(KeyboardButton(text=button))
 
-    result.add(KeyboardButton(text=t("b.back", lang)))
+    if back:
+        result.add(KeyboardButton(text=t("b.back", lang)))
 
-    result.adjust(2)
+    result.adjust(adjust)
     return result.as_markup(resize_keyboard=True)
 
 
