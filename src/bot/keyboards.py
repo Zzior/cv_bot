@@ -26,11 +26,13 @@ def back_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
 
 def build_rkb(
         t: Translator, lang: str, buttons: Iterable[str],
-        adjust: int = 2, back: bool = True
+        adjust: int = 2, back: bool = True, add: bool = False
 ) -> ReplyKeyboardMarkup:
 
     result = ReplyKeyboardBuilder()
-    result.add(KeyboardButton(text=t("b.add", lang)))
+
+    if add:
+        result.add(KeyboardButton(text=t("b.add", lang)))
 
     for button in buttons:
         result.add(KeyboardButton(text=button))
