@@ -54,6 +54,13 @@ class CameraRepo:
         camera = await self.session.execute(query)
         return camera.scalar_one_or_none()
 
+    async def get_by_source(self, source: str) -> Camera | None:
+        query = select(Camera).where(
+            Camera.source == source
+        )
+        camera = await self.session.execute(query)
+        return camera.scalar_one_or_none()
+
     async def update_roi(self, id_: int, roi: list[list[int]]) -> Camera:
         camera = await self.get_or_raise(id_)
         camera.roi = roi
