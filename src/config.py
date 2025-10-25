@@ -36,7 +36,8 @@ class BotConfig:
 
 
 @dataclass
-class LanguageConfig:
+class SystemConfig:
+    time_zone: str = getenv("TIME_ZONE")
     default_language: str = getenv("DEFAULT_LANGUAGE")
 
 
@@ -44,7 +45,7 @@ class LanguageConfig:
 class Config:
     project_dir = project_dir
     storage_dir = project_dir / "storage"
-    language = LanguageConfig()
+    system = SystemConfig()
     db = DatabaseConfig()
     bot = BotConfig()
 

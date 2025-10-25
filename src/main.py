@@ -27,7 +27,7 @@ async def main():
     task_manager = TaskManager(db)
     i18n = I18n(
         {"en": en.TEXTS},
-        config.language.default_language
+        config.system.default_language
     )
 
     app = App(
