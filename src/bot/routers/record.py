@@ -26,7 +26,7 @@ async def records_handler(message: Message, state: FSMContext, t: Translator, la
         await to_main_menu(message, state, t, lang)
 
     elif message.text in data["records"]:
-        await state.set_data({"task_id": int(message.text)})
+        await state.set_data({"task_id": int(message.text), "back_to": "to_records"})
         await state.set_state(BotState.task)
         await message.answer(t("choose", lang), reply_markup=task_rkb(t, lang))
 
