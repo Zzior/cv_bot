@@ -21,6 +21,7 @@ TEXTS = {
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
     "loading": "ℹ️ Loading ...",
+    "choose_camera": "⬇️ Choose camera",
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
@@ -37,6 +38,10 @@ TEXTS = {
     "cameras.picture_error": "❗️Error capturing photo",
 
     "records": "Choose a camera or enter a source",
+    "records.info_frm": "<b>{id}. {camera_name}</b>\n"
+                        "start: <b>{start}</b>\nend: <b>{end}</b>\n"
+                        "————————————\n",
+
     "records.start": "Enter the start time",
     "records.end": "Enter the duration (in minutes) or the end time",
     "records.segment": "Enter the segment duration (in minutes)",

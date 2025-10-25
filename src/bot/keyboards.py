@@ -23,6 +23,15 @@ def back_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
         resize_keyboard=True
     )
 
+def task_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.stop", lang))],
+            [KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
 
 def build_rkb(
         t: Translator, lang: str, buttons: Iterable[str],

@@ -8,3 +8,9 @@ class BotState(StatesGroup):
     cameras_list = State()
     cameras_add_name = State()
     cameras_add_source = State()
+
+    task = State()
+
+    records_list = State()
+    records_choose_camera = State()
+    records_enter_start = State()
