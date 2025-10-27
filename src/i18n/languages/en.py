@@ -24,6 +24,8 @@ TEXTS = {
     "loading": "ℹ️ Loading ...",
     "choose_camera": "⬇️ Choose camera",
     "️incorrect_format": "❗️Incorrect format",
+    "time_cannot_be_past": "❗️Time cannot be past",
+    "end_cannot_be_less": "❗️The end time cannot be less than the beginning",
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
@@ -38,16 +40,19 @@ TEXTS = {
 
     "cameras.picture_error": "❗️Error capturing photo",
 
-    "task.canceled": "✅ The task has been canceled",
+    "task.created": "✅ The task has been created",
+    "task.canceled": "🛑 The task has been canceled",
 
     "records": "Choose a camera or enter a source",
     "records.info_frm": "<b>{id}. {camera_name}</b>\n"
                         "start: <b>{start}</b>\nend: <b>{end}</b>\n"
                         "————————————\n",
 
-    "records.start": "Enter the start time",
-    "records.end": "Enter the duration (in minutes) or the end time",
-    "records.segment": "Enter the segment duration (in minutes)",
+    "records.enter_start_time": "Enter the start date\n"
+                                "Full format: YYYY-MM-DD HH:MM:SS",
+    "records.enter_end_time": "Enter the end date\n"
+                              "Full format: YYYY-MM-DD HH:MM:SS",
 
+    "records.enter_segment": "Enter the segment duration (in minutes)",
 
 }

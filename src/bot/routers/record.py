@@ -1,10 +1,11 @@
-import asyncio
+from datetime import datetime
 
 from aiogram import Router
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, BufferedInputFile
 
 from ..states import BotState
+from ..parsers import parse_date
 from ..keyboards import back_rkb, task_rkb
 from ..navigation import to_main_menu, to_records, choose_camera
 
@@ -44,11 +45,91 @@ async def records_choose_camera_handler(message: Message, state: FSMContext, t: 
 
     elif message.text:
         data = await state.get_data()
-        if message.text not in data["cameras"]:
+        if message.text in data["cameras"]:
             await state.update_data({"camera_name": message.text})
             await state.set_state(BotState.records_enter_start)
-            await message.answer(t("records.enter_start_time", lang))
+            await message.answer(t("records.enter_start_time", lang), reply_markup=back_rkb(t, lang))
         else:
-            await message.answer(t("cameras.exists", lang))
+            await message.answer(t("choose_camera", lang))
     else:
-        await message.answer("❗️" + t("cameras.add_name", lang))
+        await message.answer(t("choose_camera", lang))
+
+
+@record_router.message(BotState.records_enter_start)
+async def records_enter_start_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await choose_camera(message, state, t, lang, app, BotState.records_choose_camera, to_add_camera=False)
+
+    elif message.text:
+        now = datetime.now().astimezone(app.config.system.tzinfo)
+        date = parse_date(message.text, tz=app.config.system.tzinfo)
+        if date:
+            if date > now:
+                await state.update_data({"start_date": date.isoformat()})
+                await state.set_state(BotState.records_enter_end)
+                await message.answer(t("records.enter_end_time", lang))
+
+            else:
+                await message.answer(t("time_cannot_be_past", lang))
+        else:
+            await message.answer(t("️incorrect_format", lang))
+    else:
+        await message.answer("❗️" + t("cameras.add_source", lang))
+
+
+@record_router.message(BotState.records_enter_end)
+async def records_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.records_enter_start)
+        await message.answer(t("records.enter_start_time", lang))
+
+    elif message.text:
+        date = parse_date(message.text, tz=app.config.system.tzinfo)
+        if date:
+            data = await state.get_data()
+            start = datetime.fromisoformat(data["start_date"])
+            if start < date:
+                await state.update_data({"end_date": date.isoformat()})
+                await state.set_state(BotState.records_enter_segment)
+                await message.answer(t("records.enter_segment", lang))
+            else:
+                await message.answer(t("end_cannot_be_less", lang))
+        else:
+            await message.answer(t("️incorrect_format", lang))
+    else:
+        await message.answer("❗️" + t("cameras.add_source", lang))
+
+
+@record_router.message(BotState.records_enter_segment)
+async def records_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.records_enter_end)
+        await message.answer(t("records.enter_end_time", lang))
+
+    elif message.text and message.text.isdigit():
+        data = await state.get_data()
+        async with app.db.session() as db:
+            camera = await db.camera.get_by_name(data["camera_name"])
+            camera_source = camera.source
+        start = datetime.fromisoformat(data["start_date"])
+        end = datetime.fromisoformat(data["end_date"])
+        dir_name = f"{start.year}{start.month}{start.day}_{start.hour}{start.minute}{start.second}"
+        segment_size = int(message.text)
+        await app.task_manager.add_task(
+            start=start,
+            end=end,
+            conf=RecordConf(
+                reader=VideoReaderConf(source=camera_source),
+                writer=VideoWriterConf(
+                    fps=25,                                            # TODO: get fps from camera
+                    save_dir=str(app.config.storage_dir / dir_name),   # TODO: update naming
+                    timezone=app.config.system.time_zone,
+                    segment_size=segment_size * 60
+                )
+            )
+        )
+        await message.answer(t("task.created", lang))
+        await to_records(message, state, t, lang, app)
+
+    else:
+        await message.answer("❗️" + t("️incorrect_format", lang))

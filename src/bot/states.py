@@ -14,3 +14,5 @@ class BotState(StatesGroup):
     records_list = State()
     records_choose_camera = State()
     records_enter_start = State()
+    records_enter_end = State()
+    records_enter_segment = State()
