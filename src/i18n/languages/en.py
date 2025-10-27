@@ -23,12 +23,12 @@ TEXTS = {
     "choose": "⬇️ Choose",
     "loading": "ℹ️ Loading ...",
     "choose_camera": "⬇️ Choose camera",
+    "️incorrect_format": "❗️Incorrect format",
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
     "cameras.add_source": "Enter the camera source",
     "cameras.exists": "❗️The camera already exists",
-    "cameras.add_source_wrong": "❗️Incorrect format",
     "cameras.not_work": "❗️The camera is not working",
     "cameras.add_error": "❗️Error adding a camera",
     "cameras.added": "✅ Camera added successfully",

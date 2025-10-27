@@ -55,7 +55,7 @@ async def cameras_add_name_handler(message: Message, state: FSMContext, t: Trans
 
 async def add_camera(name: str, source: str, app: App, t: Translator, lang: str) -> str:
     if not source.startswith(("rtsp://", "rtsps://", "http://", "https://")):
-        return t("cameras.add_source_wrong", lang)
+        return t("️incorrect_format", lang)
 
     async with app.db.session() as db:
         can_add = await db.camera.check_to_add(name, source)
