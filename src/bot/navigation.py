@@ -1,5 +1,3 @@
-from zoneinfo import ZoneInfo
-
 from aiogram.fsm.context import FSMContext, StateType
 from aiogram.types import Message
 
@@ -57,7 +55,7 @@ async def choose_camera(
 
 
 async def to_records(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
-    time_zone = ZoneInfo(app.config.system.time_zone)
+    time_zone = app.config.system.tzinfo
     msg = ""
     tasks_ids = set()
 
