@@ -1,5 +1,7 @@
 from os import getenv
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
 from dotenv import load_dotenv
 from dataclasses import dataclass
 
@@ -39,6 +41,10 @@ class BotConfig:
 class SystemConfig:
     time_zone: str = getenv("TIME_ZONE")
     default_language: str = getenv("DEFAULT_LANGUAGE")
+
+    @property
+    def tzinfo(self) -> ZoneInfo:
+        return ZoneInfo(self.time_zone)
 
 
 @dataclass
