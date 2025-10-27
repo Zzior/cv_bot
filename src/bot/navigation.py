@@ -57,12 +57,12 @@ async def choose_camera(
 async def to_records(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     time_zone = app.config.system.tzinfo
     msg = ""
-    tasks_ids = set()
+    tasks_ids = []
 
     records = app.task_manager.get_tasks(task_type=RecordConf.model_fields["kind"].default)
     if records:
         for record in records:
-            tasks_ids.add(str(record.task_id))
+            tasks_ids.append(str(record.task_id))
             async with app.db.session() as db:
                 camera = await db.camera.get_by_source(record.conf.reader.source)
                 msg += t(
