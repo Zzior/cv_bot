@@ -3,6 +3,7 @@ TEXTS = {
     "b.add": "➕ Add",
     "b.skip": "⏩ Skip",
     "b.stop": "🛑 Stop",
+    "b.auto": "❇️ Auto",
 
     "b.cameras": "📷 Cameras",
     "b.weights": "⚖️ Weights",
@@ -30,8 +31,14 @@ TEXTS = {
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.add_name": "Enter the camera name",
     "cameras.add_source": "Enter the camera source",
+    "cameras.add_fps": "Enter the camera FPS or use auto-detection",
+    "cameras.detecting_fps": "Detecting FPS ...",
+    "cameras.add_fps_detected": "Detected {fps} FPS",
+    "cameras.fps_detection_err": "❗️Automatic FPS detection error",
+
     "cameras.exists": "❗️The camera already exists",
     "cameras.not_work": "❗️The camera is not working",
+    "cameras.check_error": "❗️The camera is not working",
     "cameras.add_error": "❗️Error adding a camera",
     "cameras.added": "✅ Camera added successfully",
 
@@ -43,7 +50,6 @@ TEXTS = {
     "task.created": "✅ The task has been created",
     "task.canceled": "🛑 The task has been canceled",
 
-    "records": "Choose a camera or enter a source",
     "records.info_frm": "<b>{id}. {camera_name}</b>\n"
                         "start: <b>{start}</b>\nend: <b>{end}</b>\n"
                         "————————————\n",

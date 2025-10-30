@@ -53,6 +53,14 @@ def build_rkb(
     return result.as_markup(resize_keyboard=True)
 
 
+def camera_fps_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.auto", lang)), KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
 def camera_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[

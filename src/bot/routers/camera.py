@@ -5,8 +5,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, BufferedInputFile
 
 from ..states import BotState
-from ..keyboards import back_rkb, camera_rkb
 from ..navigation import to_main_menu, to_cameras
+from ..keyboards import back_rkb, camera_rkb, camera_fps_rkb
 
 from services.camera import Camera
 
@@ -44,7 +44,7 @@ async def cameras_add_name_handler(message: Message, state: FSMContext, t: Trans
     elif message.text:
         data = await state.get_data()
         if message.text not in data["cameras"]:
-            await state.update_data({"name": message.text})
+            await state.set_data({"name": message.text})
             await state.set_state(BotState.cameras_add_source)
             await message.answer(t("cameras.add_source", lang))
         else:
@@ -53,39 +53,81 @@ async def cameras_add_name_handler(message: Message, state: FSMContext, t: Trans
         await message.answer("❗️" + t("cameras.add_name", lang))
 
 
-async def add_camera(name: str, source: str, app: App, t: Translator, lang: str) -> str:
+async def check_source(source: str, t: Translator, lang: str) -> str | None:
     if not source.startswith(("rtsp://", "rtsps://", "http://", "https://")):
         return t("️incorrect_format", lang)
 
-    async with app.db.session() as db:
-        can_add = await db.camera.check_to_add(name, source)
-        if not can_add:
-            return t("cameras.exists", lang)
-
     camera = Camera(source)
     ping = await camera.ping()
+
     if not ping:
         return t("cameras.not_work", lang)
 
-    async with app.db.session() as db:
-        await db.camera.new(name, source)
-
-    return t("cameras.added", lang)
+    return None
 
 @camera_router.message(BotState.cameras_add_source)
-async def cameras_add_source_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+async def cameras_add_source_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     if message.text == t("b.back", lang):
         await message.answer(t("cameras.add_name", lang))
         await state.set_state(BotState.cameras_add_name)
 
     elif message.text:
-        data = await state.get_data()
         try:
-            added_msg = await add_camera(data["name"], message.text, app, t, lang)
+            source_error = await check_source(message.text, t, lang)
         except Exception as e:
             _ = e
-            added_msg = t("cameras.add_error", lang)
+            source_error = t("cameras.check_error", lang)
 
+        if source_error:
+            await message.answer(source_error)
+
+        else:
+            await state.update_data({"source": message.text})
+            await state.set_state(BotState.cameras_add_fps)
+            await message.answer(t("cameras.add_fps", lang), reply_markup=camera_fps_rkb(t, lang))
+
+    else:
+        await message.answer("❗️" + t("cameras.add_source", lang))
+
+
+async def add_camera(name: str, source: str, fps: int, app: App, t: Translator, lang: str) -> str:
+    try:
+        async with app.db.session() as db:
+            can_add = await db.camera.check_to_add(name, source)
+            if not can_add:
+                return t("cameras.exists", lang)
+
+        async with app.db.session() as db:
+            await db.camera.new(name, source, fps)
+
+        return t("cameras.added", lang)
+
+    except Exception as e:
+        _ = e
+        return t("cameras.add_error", lang)
+
+@camera_router.message(BotState.cameras_add_fps)
+async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await message.answer(t("cameras.add_name", lang))
+        await state.set_state(BotState.cameras_add_source)
+
+    if message.text == t("b.auto", lang):
+        camera = Camera(data["source"])
+        await message.answer(t("cameras.detecting_fps", lang))
+        detected_fps = await asyncio.to_thread(camera.get_fps, calc_frames=60)
+        if detected_fps is None:
+            await message.answer(t("cameras.fps_detection_err", lang))
+        else:
+            detected_fps = round(detected_fps)
+            await message.answer(t("cameras.add_fps_detected", lang, fps=detected_fps))
+            added_msg = await add_camera(data["name"], data["source"], detected_fps, app, t, lang)
+            await to_cameras(message, state, t, lang, app, msg=added_msg)
+
+    elif message.text and message.text.isdigit():
+        added_msg = await add_camera(data["name"], data["source"], int(message.text), app, t, lang)
         await to_cameras(message, state, t, lang, app, msg=added_msg)
 
     else:
