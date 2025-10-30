@@ -25,6 +25,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('source', sa.String(length=255), nullable=False),
+    sa.Column('cameras', sa.Column('fps', sa.Integer(), nullable=False)),
     sa.Column('roi', sa.ARRAY(sa.Integer(), dimensions=2), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_cameras')),
     sa.UniqueConstraint('name', name=op.f('uq_cameras_name')),

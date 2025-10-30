@@ -13,10 +13,11 @@ class CameraRepo:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def new(self, name: str, source: str, roi: list | None = None) -> Camera:
+    async def new(self, name: str, source: str, fps: int, roi: list | None = None) -> Camera:
         camera = Camera(
             name=name,
             source=source,
+            fps=fps,
             roi=roi or []
         )
         self.session.add(camera)
