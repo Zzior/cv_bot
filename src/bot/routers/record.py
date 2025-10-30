@@ -111,6 +111,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         async with app.db.session() as db:
             camera = await db.camera.get_by_name(data["camera_name"])
             camera_source = camera.source
+            camera_fps = camera.fps
         start = datetime.fromisoformat(data["start_date"])
         end = datetime.fromisoformat(data["end_date"])
         dir_name = f"{start.year}{start.month}{start.day}_{start.hour}{start.minute}{start.second}"
@@ -121,7 +122,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
             conf=RecordConf(
                 reader=VideoReaderConf(source=camera_source),
                 writer=VideoWriterConf(
-                    fps=camera.fps,
+                    fps=camera_fps,
                     save_dir=str(app.config.storage_dir / dir_name),   # TODO: update naming
                     timezone=app.config.system.time_zone,
                     segment_size=segment_size * 60
