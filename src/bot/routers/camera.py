@@ -84,7 +84,7 @@ async def cameras_add_source_handler(message: Message, state: FSMContext, t: Tra
         else:
             await state.update_data({"source": message.text})
             await state.set_state(BotState.cameras_add_fps)
-            await message.answer(t("cameras.add_fps", lang), reply_markup=camera_fps_rkb(t, lang))
+            await message.answer(t("cameras.enter_fps", lang), reply_markup=camera_fps_rkb(t, lang))
 
     else:
         await message.answer("❗️" + t("cameras.enter_source", lang))
@@ -114,7 +114,7 @@ async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Transl
         await message.answer(t("cameras.enter_name", lang))
         await state.set_state(BotState.cameras_add_source)
 
-    if message.text == t("b.auto", lang):
+    elif message.text == t("b.auto", lang):
         camera = Camera(data["source"])
         await message.answer(t("cameras.detecting_fps", lang), reply_markup=ReplyKeyboardRemove())
         detected_fps = await asyncio.to_thread(camera.get_fps, calc_frames=60)
@@ -122,7 +122,7 @@ async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Transl
             await message.answer(t("cameras.fps_detection_err", lang), reply_markup=camera_fps_rkb(t, lang))
         else:
             detected_fps = round(detected_fps)
-            await message.answer(t("cameras.add_fps_detected", lang, fps=detected_fps))
+            await message.answer(t("cameras.enter_fps_detected", lang, fps=detected_fps))
             added_msg = await add_camera(data["name"], data["source"], detected_fps, app, t, lang)
             await to_cameras(message, state, t, lang, app, msg=added_msg)
 
@@ -155,7 +155,8 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
         await message.answer("TODO")
 
     elif message.text == t("b.fps", lang):
-        await message.answer("TODO")
+        await state.set_state(BotState.camera_change_fps)
+        await message.answer(t("cameras.enter_fps", lang), reply_markup=camera_fps_rkb(t, lang))
 
     elif message.text == t("b.picture", lang):
         await camera_picture(message, state, t, lang, app)
@@ -266,3 +267,41 @@ async def camera_delete_handler(message: Message, state: FSMContext, t: Translat
 
     else:
         await message.answer(t("cameras.enter_name", lang))
+
+
+@camera_router.message(BotState.camera_change_fps)
+async def camera_change_fps_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text == t("b.auto", lang):
+        await message.answer(t("cameras.detecting_fps", lang), reply_markup=ReplyKeyboardRemove())
+
+        data = await state.get_data()
+        async with app.db.session() as db:
+            db_camera = await db.camera.get(data["camera_id"])
+
+            camera = Camera(db_camera.source)
+            detected_fps = await asyncio.to_thread(camera.get_fps, calc_frames=60)
+            if detected_fps is None:
+                await message.answer(t("cameras.fps_detection_err", lang), reply_markup=camera_fps_rkb(t, lang))
+            else:
+                detected_fps = round(detected_fps)
+                await message.answer(t("cameras.enter_fps_detected", lang, fps=detected_fps))
+                db_camera.fps = detected_fps
+
+                await state.set_state(BotState.camera)
+                await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text and message.text.isdigit():
+        data = await state.get_data()
+        async with app.db.session() as db:
+            db_camera = await db.camera.get(data["camera_id"])
+            db_camera.fps = int(message.text)
+
+            await state.set_state(BotState.camera)
+            await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    else:
+        await message.answer("❗️" + t("cameras.enter_source", lang))

@@ -36,9 +36,9 @@ TEXTS = {
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.enter_name": "Enter the camera name",
     "cameras.enter_source": "Enter the camera source",
-    "cameras.add_fps": "Enter the camera FPS or use auto-detection",
+    "cameras.enter_fps": "Enter the camera FPS or use auto-detection",
     "cameras.detecting_fps": "Detecting FPS ...",
-    "cameras.add_fps_detected": "Detected {fps} FPS",
+    "cameras.enter_fps_detected": "Detected {fps} FPS",
     "cameras.fps_detection_err": "❗️Automatic FPS detection error",
 
     "cameras.exists": "❗️The camera already exists",
