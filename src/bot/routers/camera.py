@@ -2,7 +2,7 @@ import asyncio
 
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, BufferedInputFile
+from aiogram.types import Message, BufferedInputFile, ReplyKeyboardRemove
 
 from ..states import BotState
 from ..navigation import to_main_menu, to_cameras
@@ -116,10 +116,10 @@ async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Transl
 
     if message.text == t("b.auto", lang):
         camera = Camera(data["source"])
-        await message.answer(t("cameras.detecting_fps", lang))
+        await message.answer(t("cameras.detecting_fps", lang), reply_markup=ReplyKeyboardRemove())
         detected_fps = await asyncio.to_thread(camera.get_fps, calc_frames=60)
         if detected_fps is None:
-            await message.answer(t("cameras.fps_detection_err", lang))
+            await message.answer(t("cameras.fps_detection_err", lang), reply_markup=camera_fps_rkb(t, lang))
         else:
             detected_fps = round(detected_fps)
             await message.answer(t("cameras.add_fps_detected", lang, fps=detected_fps))
