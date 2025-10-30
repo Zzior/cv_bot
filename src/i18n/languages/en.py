@@ -4,6 +4,7 @@ TEXTS = {
     "b.skip": "⏩ Skip",
     "b.stop": "🛑 Stop",
     "b.auto": "❇️ Auto",
+    "b.delete": "🗑 Delete",
 
     "b.cameras": "📷 Cameras",
     "b.weights": "⚖️ Weights",
@@ -15,6 +16,7 @@ TEXTS = {
     "b.rename": "✏️ Rename",
     "b.source": "🔗 Source",
     "b.roi": "🎯 ROI",
+    "b.fps": "❇️ FPS",
     "b.picture": "📸 Picture",
     "b.ping": "🔴 Ping",
 

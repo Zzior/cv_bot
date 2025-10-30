@@ -64,9 +64,20 @@ def camera_fps_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
 def camera_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text=t("b.rename", lang)), KeyboardButton(text=t("b.source", lang))],
-            [KeyboardButton(text=t("b.roi", lang)), KeyboardButton(text=t("b.picture", lang))],
-            [KeyboardButton(text=t("b.ping", lang)), KeyboardButton(text=t("b.back", lang))]
+            [
+                KeyboardButton(text=t("b.rename", lang)),
+                KeyboardButton(text=t("b.source", lang)),
+                KeyboardButton(text=t("b.delete", lang))
+            ],
+            [
+                KeyboardButton(text=t("b.ping", lang)),
+                KeyboardButton(text=t("b.roi", lang)),
+                KeyboardButton(text=t("b.fps", lang))
+            ],
+            [
+                KeyboardButton(text=t("b.picture", lang)),
+                KeyboardButton(text=t("b.back", lang))
+            ]
         ],
         resize_keyboard=True
     )
