@@ -6,7 +6,7 @@ from aiogram.types import Message, BufferedInputFile
 
 from ..states import BotState
 from ..navigation import to_main_menu, to_cameras
-from ..keyboards import back_rkb, camera_rkb, camera_fps_rkb
+from ..keyboards import back_rkb, camera_rkb, camera_fps_rkb, confirm_delete_rkb
 
 from services.camera import Camera
 
@@ -148,7 +148,8 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
         await state.set_state(BotState.camera_change_source)
 
     elif message.text == t("b.delete", lang):
-        await message.answer("TODO")
+        await message.answer(t("sure_delete", lang), reply_markup=confirm_delete_rkb(t, lang))
+        await state.set_state(BotState.camera_delete)
 
     elif message.text == t("b.roi", lang):
         await message.answer("TODO")
@@ -246,5 +247,22 @@ async def camera_change_name_handler(message: Message, state: FSMContext, t: Tra
         await message.answer(t("changes_saved", lang))
         await state.set_state(BotState.camera)
         await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+    else:
+        await message.answer(t("cameras.enter_name", lang))
+
+
+@camera_router.message(BotState.camera_delete)
+async def camera_delete_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text:
+        data = await state.get_data()
+        async with app.db.session() as db:
+            await db.camera.delete(data["camera_id"])
+
+        await to_cameras(message, state, t, lang, app, msg=t("deleted", lang))
+
     else:
         await message.answer(t("cameras.enter_name", lang))

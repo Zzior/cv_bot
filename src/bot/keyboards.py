@@ -23,6 +23,14 @@ def back_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
         resize_keyboard=True
     )
 
+def confirm_delete_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.delete", lang)), KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
 def task_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[

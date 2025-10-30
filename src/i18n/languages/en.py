@@ -25,10 +25,12 @@ TEXTS = {
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
     "loading": "ℹ️ Loading ...",
+    "deleted": "🗑 Successfully deleted",
     "choose_camera": "⬇️ Choose camera",
     "️incorrect_format": "❗️Incorrect format",
     "changes_saved": "✅ The changes are saved",
     "time_cannot_be_past": "❗️Time cannot be past",
+    "sure_delete": "⚠️ Are you sure you want to delete?",
     "end_cannot_be_less": "❗️The end time cannot be less than the beginning",
 
     "cameras.empty": "ℹ️ You don't have cameras",
