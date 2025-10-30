@@ -29,7 +29,7 @@ async def cameras_handler(message: Message, state: FSMContext, t: Translator, la
         await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
 
     elif message.text == t("b.add", lang):
-        await message.answer(t("cameras.add_name", lang), reply_markup=back_rkb(t, lang))
+        await message.answer(t("cameras.enter_name", lang), reply_markup=back_rkb(t, lang))
         await state.set_state(BotState.cameras_add_name)
 
     else:
@@ -46,11 +46,11 @@ async def cameras_add_name_handler(message: Message, state: FSMContext, t: Trans
         if message.text not in data["cameras"]:
             await state.set_data({"name": message.text})
             await state.set_state(BotState.cameras_add_source)
-            await message.answer(t("cameras.add_source", lang))
+            await message.answer(t("cameras.enter_source", lang))
         else:
             await message.answer(t("cameras.exists", lang))
     else:
-        await message.answer("❗️" + t("cameras.add_name", lang))
+        await message.answer("❗️" + t("cameras.enter_name", lang))
 
 
 async def check_source(source: str, t: Translator, lang: str) -> str | None:
@@ -68,7 +68,7 @@ async def check_source(source: str, t: Translator, lang: str) -> str | None:
 @camera_router.message(BotState.cameras_add_source)
 async def cameras_add_source_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     if message.text == t("b.back", lang):
-        await message.answer(t("cameras.add_name", lang))
+        await message.answer(t("cameras.enter_name", lang))
         await state.set_state(BotState.cameras_add_name)
 
     elif message.text:
@@ -87,7 +87,7 @@ async def cameras_add_source_handler(message: Message, state: FSMContext, t: Tra
             await message.answer(t("cameras.add_fps", lang), reply_markup=camera_fps_rkb(t, lang))
 
     else:
-        await message.answer("❗️" + t("cameras.add_source", lang))
+        await message.answer("❗️" + t("cameras.enter_source", lang))
 
 
 async def add_camera(name: str, source: str, fps: int, app: App, t: Translator, lang: str) -> str:
@@ -111,7 +111,7 @@ async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Transl
     data = await state.get_data()
 
     if message.text == t("b.back", lang):
-        await message.answer(t("cameras.add_name", lang))
+        await message.answer(t("cameras.enter_name", lang))
         await state.set_state(BotState.cameras_add_source)
 
     if message.text == t("b.auto", lang):
@@ -131,7 +131,7 @@ async def cameras_add_fps_handler(message: Message, state: FSMContext, t: Transl
         await to_cameras(message, state, t, lang, app, msg=added_msg)
 
     else:
-        await message.answer("❗️" + t("cameras.add_source", lang))
+        await message.answer("❗️" + t("cameras.enter_source", lang))
 
 
 @camera_router.message(BotState.camera)
@@ -140,11 +140,22 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
         await to_cameras(message, state, t, lang, app)
 
     elif message.text == t("b.rename", lang):
-        await message.answer("TODO")
+        await message.answer(t("cameras.enter_name", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.camera_change_name)
+
     elif message.text == t("b.source", lang):
+        await message.answer(t("cameras.enter_source", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.camera_change_source)
+
+    elif message.text == t("b.delete", lang):
         await message.answer("TODO")
+
     elif message.text == t("b.roi", lang):
         await message.answer("TODO")
+
+    elif message.text == t("b.fps", lang):
+        await message.answer("TODO")
+
     elif message.text == t("b.picture", lang):
         await camera_picture(message, state, t, lang, app)
 
@@ -180,3 +191,60 @@ async def camera_picture(message: Message, state: FSMContext, t: Translator, lan
         await message.answer_photo(BufferedInputFile(pic, "picture.jpg"))
     else:
         await message.answer(t("cameras.picture_error", lang))
+
+
+@camera_router.message(BotState.camera_change_name)
+async def camera_change_name_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text:
+        data = await state.get_data()
+        async with app.db.session() as db:
+            exists = await db.camera.get_by_name(message.text)
+            if exists:
+                await message.answer(t("cameras.exists", lang))
+                return
+
+            else:
+                camera = await db.camera.get(data["camera_id"])
+                camera.name = message.text
+
+        await message.answer(t("changes_saved", lang))
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    else:
+        await message.answer(t("cameras.enter_name", lang))
+
+
+@camera_router.message(BotState.camera_change_source)
+async def camera_change_name_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text:
+        data = await state.get_data()
+
+        async with app.db.session() as db:
+            exists = await db.camera.get_by_source(message.text)
+            if exists:
+                await message.answer(t("cameras.exists", lang))
+                return
+
+        source_error = await check_source(message.text, t, lang)
+        if source_error:
+            await message.answer(source_error)
+            return
+
+        async with app.db.session() as db:
+            camera = await db.camera.get(data["camera_id"])
+            camera.source = message.text
+
+        await message.answer(t("changes_saved", lang))
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+    else:
+        await message.answer(t("cameras.enter_name", lang))

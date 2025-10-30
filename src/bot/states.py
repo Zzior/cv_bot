@@ -10,6 +10,12 @@ class BotState(StatesGroup):
     cameras_add_source = State()
     cameras_add_fps = State()
 
+    camera_delete = State()
+    camera_change_name = State()
+    camera_change_source = State()
+    camera_change_roi = State()
+    camera_change_fps = State()
+
     task = State()
 
     records_list = State()
