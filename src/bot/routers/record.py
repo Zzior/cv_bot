@@ -74,7 +74,7 @@ async def records_enter_start_handler(message: Message, state: FSMContext, t: Tr
         else:
             await message.answer(t("️incorrect_format", lang))
     else:
-        await message.answer("❗️" + t("cameras.add_source", lang))
+        await message.answer("❗️" + t("cameras.enter_source", lang))
 
 
 @record_router.message(BotState.records_enter_end)
@@ -97,7 +97,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         else:
             await message.answer(t("️incorrect_format", lang))
     else:
-        await message.answer("❗️" + t("cameras.add_source", lang))
+        await message.answer("❗️" + t("cameras.enter_source", lang))
 
 
 @record_router.message(BotState.records_enter_segment)

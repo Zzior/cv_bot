@@ -51,7 +51,7 @@ async def choose_camera(
         await message.answer(t("cameras.empty", lang))
         if to_add_camera:
             await state.set_state(BotState.cameras_add_name)
-            await message.answer(t("cameras.add_name", lang), reply_markup=back_rkb(t, lang))
+            await message.answer(t("cameras.enter_name", lang), reply_markup=back_rkb(t, lang))
 
 
 async def to_records(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
