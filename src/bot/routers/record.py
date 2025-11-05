@@ -84,16 +84,22 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         await message.answer(t("records.enter_start_time", lang))
 
     elif message.text:
+        now = datetime.now().astimezone(app.config.system.tzinfo)
         date = parse_date(message.text, tz=app.config.system.tzinfo)
         if date:
             data = await state.get_data()
             start = datetime.fromisoformat(data["start_date"])
-            if start < date:
+            if start >= date:
+                await message.answer(t("end_cannot_be_less", lang))
+
+            elif start < date > now:
                 await state.update_data({"end_date": date.isoformat()})
                 await state.set_state(BotState.records_enter_segment)
                 await message.answer(t("records.enter_segment", lang))
+
             else:
-                await message.answer(t("end_cannot_be_less", lang))
+                await message.answer(t("time_cannot_be_past", lang))
+
         else:
             await message.answer(t("️incorrect_format", lang))
     else:
