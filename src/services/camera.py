@@ -1,6 +1,12 @@
 import time
 import asyncio
+from typing import Literal, Union
 from urllib.parse import urlparse
+
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 
 class Camera:
@@ -42,24 +48,36 @@ class Camera:
             _ = e
             return False
 
-    def picture(self) -> bytes | None:
+    def picture(
+            self,
+            mode: Literal["numpy", "jpg"],
+            draw_roi: bool = False
+    ) -> tuple[Union["NDArray", bytes, None], tuple[int, int, int] | None]:
         import cv2
+        import numpy as np
 
         capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG)
         capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         if not capture.isOpened():
-            return None
+            return None, None
 
         try:
             status, frame = capture.read()
             if not status:
-                return None
+                return None, None
 
-            status, jpeg = cv2.imencode(".jpg", frame)
-            if not status:
-                return None
+            if draw_roi and self.roi:
+                roi = np.array(self.roi, dtype=np.int32)
+                cv2.polylines(frame, [roi], True, (0, 255, 0), 2)
 
-            return jpeg.tobytes()
+            if mode == "jpg":
+                status, jpeg = cv2.imencode(".jpg", frame)
+                if not status:
+                    return None, None
+                return jpeg.tobytes(), frame.shape
+
+            else:
+                return frame, frame.shape
 
         finally:
             capture.release()

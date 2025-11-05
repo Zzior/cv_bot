@@ -5,6 +5,7 @@ TEXTS = {
     "b.stop": "🛑 Stop",
     "b.auto": "❇️ Auto",
     "b.delete": "🗑 Delete",
+    "b.confirm": "✅ Confirm",
 
     "b.cameras": "📷 Cameras",
     "b.weights": "⚖️ Weights",
@@ -16,6 +17,7 @@ TEXTS = {
     "b.rename": "✏️ Rename",
     "b.source": "🔗 Source",
     "b.roi": "🎯 ROI",
+    "b.show_roi": "🎯 Show ROI",
     "b.fps": "❇️ FPS",
     "b.picture": "📸 Picture",
     "b.ping": "🔴 Ping",
@@ -25,6 +27,7 @@ TEXTS = {
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
     "loading": "ℹ️ Loading ...",
+    "confirm": "❇️ Confirm the changes",
     "deleted": "🗑 Successfully deleted",
     "choose_camera": "⬇️ Choose camera",
     "️incorrect_format": "❗️Incorrect format",
@@ -51,6 +54,8 @@ TEXTS = {
     "cameras.ping_error": "🔴 Ping error",
 
     "cameras.picture_error": "❗️Error capturing photo",
+    "cameras.enter_roi": "Enter the ROI\n"
+                         "in the format [[int, int], [int, int], ...]",
 
     "task.created": "✅ The task has been created",
     "task.canceled": "🛑 The task has been canceled",

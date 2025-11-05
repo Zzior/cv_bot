@@ -1,4 +1,6 @@
+import json
 import asyncio
+from typing import Literal
 
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
@@ -6,7 +8,7 @@ from aiogram.types import Message, BufferedInputFile, ReplyKeyboardRemove
 
 from ..states import BotState
 from ..navigation import to_main_menu, to_cameras
-from ..keyboards import back_rkb, camera_rkb, camera_fps_rkb, confirm_delete_rkb
+from ..keyboards import back_rkb, camera_rkb, camera_fps_rkb, confirm_delete_rkb, camera_roi_rkb, confirm_rkb
 
 from services.camera import Camera
 
@@ -152,7 +154,8 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
         await state.set_state(BotState.camera_delete)
 
     elif message.text == t("b.roi", lang):
-        await message.answer("TODO")
+        await state.set_state(BotState.camera_change_roi)
+        await message.answer(t("cameras.enter_roi", lang), reply_markup=camera_roi_rkb(t, lang))
 
     elif message.text == t("b.fps", lang):
         await state.set_state(BotState.camera_change_fps)
@@ -188,7 +191,8 @@ async def camera_picture(message: Message, state: FSMContext, t: Translator, lan
         source = camera.source
 
     camera = Camera(source)
-    pic = await asyncio.to_thread(camera.picture)
+    picture_mode: Literal["numpy", "jpg"] = "jpg"  # Keep Literal so static checkers don't widen to 'str' (workaround for asyncio.to_thread)
+    pic, shape = await asyncio.to_thread(camera.picture, mode=picture_mode)
     if pic:
         await message.answer_photo(BufferedInputFile(pic, "picture.jpg"))
     else:
@@ -213,16 +217,15 @@ async def camera_change_name_handler(message: Message, state: FSMContext, t: Tra
                 camera = await db.camera.get(data["camera_id"])
                 camera.name = message.text
 
-        await message.answer(t("changes_saved", lang))
         await state.set_state(BotState.camera)
-        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+        await message.answer(t("changes_saved", lang), reply_markup=camera_rkb(t, lang))
 
     else:
         await message.answer(t("cameras.enter_name", lang))
 
 
 @camera_router.message(BotState.camera_change_source)
-async def camera_change_name_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+async def camera_change_source_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
         await state.set_state(BotState.camera)
         await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
@@ -245,9 +248,8 @@ async def camera_change_name_handler(message: Message, state: FSMContext, t: Tra
             camera = await db.camera.get(data["camera_id"])
             camera.source = message.text
 
-        await message.answer(t("changes_saved", lang))
         await state.set_state(BotState.camera)
-        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+        await message.answer(t("changes_saved", lang), reply_markup=camera_rkb(t, lang))
     else:
         await message.answer(t("cameras.enter_name", lang))
 
@@ -305,3 +307,93 @@ async def camera_change_fps_handler(message: Message, state: FSMContext, t: Tran
 
     else:
         await message.answer("❗️" + t("cameras.enter_source", lang))
+
+
+async def camera_roi_picture(
+        message: Message, t: Translator, lang: str, app: App,
+        source: str, roi: list[list[int]]
+) -> None:
+    await message.answer(t("loading", lang))
+
+    camera = Camera(source, roi)
+    picture_mode: Literal["numpy", "jpg"] = "jpg"  # Keep Literal so static checkers don't widen to 'str' (workaround for asyncio.to_thread)
+    pic, shape = await asyncio.to_thread(camera.picture, mode=picture_mode, draw_roi=True)
+    if pic:
+        await message.answer_photo(
+            BufferedInputFile(pic, "picture.jpg"),
+            caption=f"🎯 {', '.join(map(str, roi)) if roi else 'None'}\n\n"
+                    f"📏 {shape[1]}x{shape[0]}",
+        )
+    else:
+        await message.answer(t("cameras.picture_error", lang))
+
+
+def validate_roi(text: str) -> list[list[int]] | None:
+    try:
+        check_roi = json.loads(text)
+        if not isinstance(check_roi, list):
+            return None
+
+        for roi in check_roi:
+            if not isinstance(roi, list):
+                return None
+
+            if len(roi) != 2:
+                return None
+
+            if not (isinstance(roi[0], int) and isinstance(roi[1], int)):
+                return None
+
+        return check_roi
+
+    except json.JSONDecodeError:
+        return None
+
+
+@camera_router.message(BotState.camera_change_roi)
+async def camera_change_roi_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera)
+        await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
+
+    elif message.text:
+        data = await state.get_data()
+        async with app.db.session() as db:
+            db_camera = await db.camera.get(data["camera_id"])
+            source = db_camera.source
+            roi = db_camera.roi
+
+        if message.text == t("b.show_roi", lang):
+            await camera_roi_picture(message, t, lang, app, source, roi)
+        else:
+            roi = validate_roi(message.text)
+            if roi is None:
+                await message.answer(t("️incorrect_format", lang))
+
+            else:
+                await state.update_data({"roi": roi})
+                await state.set_state(BotState.camera_confirm_change_roi)
+                await camera_roi_picture(message, t, lang, app, source, roi)
+                await message.answer(t("confirm", lang), reply_markup=confirm_rkb(t, lang))
+
+    else:
+        await message.answer(t("️incorrect_format", lang))
+
+
+@camera_router.message(BotState.camera_confirm_change_roi)
+async def camera_confirm_change_roi_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.camera_change_roi)
+        await message.answer(t("cameras.enter_roi", lang), reply_markup=camera_roi_rkb(t, lang))
+
+    elif message.text == t("b.confirm", lang):
+        data = await state.get_data()
+
+        async with app.db.session() as db:
+            db_camera = await db.camera.get(data["camera_id"])
+            db_camera.roi = data["roi"]
+
+        await state.set_state(BotState.camera)
+        await message.answer(t("changes_saved", lang), reply_markup=camera_rkb(t, lang))
+    else:
+        await camera_change_roi_handler(message, state, t, lang, app)

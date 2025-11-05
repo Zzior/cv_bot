@@ -14,6 +14,7 @@ class BotState(StatesGroup):
     camera_change_name = State()
     camera_change_source = State()
     camera_change_roi = State()
+    camera_confirm_change_roi = State()
     camera_change_fps = State()
 
     task = State()

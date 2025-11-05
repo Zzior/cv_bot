@@ -24,6 +24,15 @@ def back_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     )
 
 
+def confirm_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.confirm", lang)), KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
+
 def now_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text=t("b.now", lang)), KeyboardButton(text=t("b.back", lang))]],
@@ -76,6 +85,16 @@ def camera_fps_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
         ],
         resize_keyboard=True
     )
+
+
+def camera_roi_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.show_roi", lang)), KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
 
 def camera_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
