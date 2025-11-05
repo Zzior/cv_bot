@@ -123,7 +123,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
                 reader=VideoReaderConf(source=camera_source),
                 writer=VideoWriterConf(
                     fps=camera_fps,
-                    save_dir=str(app.config.storage_dir / dir_name),   # TODO: update naming
+                    save_dir=str(app.config.storage_dir / "Records" / dir_name),
                     timezone=app.config.system.time_zone,
                     segment_size=segment_size * 60
                 )
