@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from ..states import BotState
 from ..parsers import parse_date
-from ..keyboards import back_rkb, task_rkb
+from ..keyboards import back_rkb, task_rkb, now_rkb
 from ..navigation import to_main_menu, to_records, choose_camera
 
 from services.record.conf import RecordConf
@@ -48,7 +48,7 @@ async def records_choose_camera_handler(message: Message, state: FSMContext, t: 
         if message.text in data["cameras"]:
             await state.update_data({"camera_name": message.text})
             await state.set_state(BotState.records_enter_start)
-            await message.answer(t("records.enter_start_time", lang), reply_markup=back_rkb(t, lang))
+            await message.answer(t("records.enter_start_time", lang), reply_markup=now_rkb(t, lang))
         else:
             await message.answer(t("choose_camera", lang))
     else:
@@ -62,12 +62,17 @@ async def records_enter_start_handler(message: Message, state: FSMContext, t: Tr
 
     elif message.text:
         now = datetime.now().astimezone(app.config.system.tzinfo)
-        date = parse_date(message.text, tz=app.config.system.tzinfo)
+
+        if message.text == t("b.now", lang):
+            date = now
+        else:
+            date = parse_date(message.text, tz=app.config.system.tzinfo)
+
         if date:
-            if date > now:
+            if date >= now:
                 await state.update_data({"start_date": date.isoformat()})
                 await state.set_state(BotState.records_enter_end)
-                await message.answer(t("records.enter_end_time", lang))
+                await message.answer(t("records.enter_end_time", lang), reply_markup=back_rkb(t, lang))
 
             else:
                 await message.answer(t("time_cannot_be_past", lang))
