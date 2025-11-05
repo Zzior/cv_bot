@@ -1,11 +1,11 @@
 from datetime import datetime, tzinfo
 
 DATE_FORMATS = (
-    "%Y %m %d %H %M %S",
-    "%Y %m %d %H %M",
-    "%Y %m %d",
-    "%H %M %S",
     "%H %M",
+    "%H %M %S",
+    "%Y %m %d",
+    "%Y %m %d %H %M",
+    "%Y %m %d %H %M %S",
 )
 
 def parse_date(text: str, tz: tzinfo | None = None) -> datetime | None:
