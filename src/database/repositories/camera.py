@@ -24,7 +24,7 @@ class CameraRepo:
         await self.session.flush()
         return camera
 
-    async def check_to_add(self, name: str, source: str):
+    async def check_to_add(self, name: str, source: str) -> bool:
         query = select(
             exists().where(
                 or_(Camera.name == name, Camera.source == source)
