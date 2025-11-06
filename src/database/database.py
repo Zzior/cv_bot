@@ -5,18 +5,21 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from .repositories import CameraRepo, TaskRepo
+from .repositories import CameraRepo, TaskRepo, WeightRepo
 
 
 class Database:
     session: AsyncSession
 
     camera: CameraRepo
+    task: TaskRepo
+    weight: WeightRepo
 
     def __init__(self, session: AsyncSession):
         self.session = session
         self.camera = CameraRepo(session=session)
         self.task = TaskRepo(session=session)
+        self.weight = WeightRepo(session=session)
 
 
 class DatabaseProvider:
