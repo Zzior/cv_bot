@@ -116,3 +116,18 @@ def camera_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
         ],
         resize_keyboard=True
     )
+
+def weight_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text=t("b.rename", lang)),
+                KeyboardButton(text=t("b.delete", lang))
+            ],
+            [
+                KeyboardButton(text=t("b.test", lang)),
+                KeyboardButton(text=t("b.back", lang)),
+            ]
+        ],
+        resize_keyboard=True
+    )

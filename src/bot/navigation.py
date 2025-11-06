@@ -54,6 +54,22 @@ async def choose_camera(
             await message.answer(t("cameras.enter_name", lang), reply_markup=back_rkb(t, lang))
 
 
+async def to_weights(message: Message, state: FSMContext, t: Translator, lang: str, app: App, msg: str = None) -> None:
+    async with app.db.session() as db:
+        weights = await db.weight.all()
+        weights_info = {weight.name: weight.id for weight in weights}
+
+    if msg is None:
+        if weights_info:
+            msg = t("choose", lang)
+        else:
+            msg = t("weights.empty", lang)
+
+    await state.set_state(BotState.weights_list)
+    await state.set_data({"weights": weights_info})
+    await message.answer(msg, reply_markup=build_rkb(t, lang, weights_info.keys(), add=True))
+
+
 async def to_records(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     time_zone = app.config.system.tzinfo
     msg = ""

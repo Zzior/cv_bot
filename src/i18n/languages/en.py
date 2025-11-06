@@ -21,8 +21,10 @@ TEXTS = {
     "b.fps": "❇️ FPS",
     "b.picture": "📸 Picture",
     "b.ping": "🔴 Ping",
+    "b.test": "🔬 Test",
 
     "b.now": "Now",
+
 
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
@@ -35,6 +37,7 @@ TEXTS = {
     "time_cannot_be_past": "❗️Time cannot be past",
     "sure_delete": "⚠️ Are you sure you want to delete?",
     "end_cannot_be_less": "❗️The end time cannot be less than the beginning",
+
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.enter_name": "Enter the camera name",
@@ -57,8 +60,14 @@ TEXTS = {
     "cameras.enter_roi": "Enter the ROI\n"
                          "in the format [[int, int], [int, int], ...]",
 
+
+    "weights.empty": "ℹ️ You don't have weights",
+    "weights.enter_name": "Enter the weight name",
+
+
     "task.created": "✅ The task has been created",
     "task.canceled": "🛑 The task has been canceled",
+
 
     "records.info_frm": "<b>{id}. {camera_name}</b>\n"
                         "start: <b>{start}</b>\nend: <b>{end}</b>\n"
