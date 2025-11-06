@@ -1,12 +1,10 @@
 import time
 import asyncio
-from typing import Literal, Union
+from typing import Literal
 from urllib.parse import urlparse
 
-
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from numpy.typing import NDArray
+import cv2
+import numpy as np
 
 
 class Camera:
@@ -52,10 +50,7 @@ class Camera:
             self,
             mode: Literal["numpy", "jpg"],
             draw_roi: bool = False
-    ) -> tuple[Union["NDArray", bytes, None], tuple[int, int, int] | None]:
-        import cv2
-        import numpy as np
-
+    ) -> tuple[np.typing.NDArray | bytes | None, tuple[int, int, int] | None]:
         capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG)
         capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         if not capture.isOpened():
@@ -83,8 +78,6 @@ class Camera:
             capture.release()
 
     def get_fps(self, calc_frames: int = 30, drop_frames: int = 15, attempts: int = 5) -> float | None:
-        import cv2
-
         capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG)
         capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         if not capture.isOpened():
