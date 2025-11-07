@@ -29,6 +29,8 @@ TEXTS = {
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
     "loading": "ℹ️ Loading ...",
+    "download_error": "❗️Download failed",
+    "test_error": "❗️Test failed",
     "confirm": "❇️ Confirm the changes",
     "deleted": "🗑 Successfully deleted",
     "choose_camera": "⬇️ Choose camera",
@@ -67,9 +69,10 @@ TEXTS = {
     "weights.exists": "❗️These weights already exist",
     "weights.file_exists": "❗️This file already exists",
     "weights.unsupported": "❗️Unsupported file format",
-    "weights.download_error": "❗️Download failed",
     "weights.add_error": "❗️Failed to add weights",
     "weights.added": "✅ Weights added successfully",
+
+    "weights.send_photo": "🌠 Send picture",
 
     "task.created": "✅ The task has been created",
     "task.canceled": "🛑 The task has been canceled",

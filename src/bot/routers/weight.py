@@ -1,3 +1,7 @@
+import asyncio
+from pathlib import Path
+from typing import BinaryIO
+
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, Document, BufferedInputFile, ReplyKeyboardRemove
@@ -24,7 +28,7 @@ async def weights_list_handler(message: Message, state: FSMContext, t: Translato
 
     elif message.text in data["weights"]:
         await state.set_data({"weight_id": data["weights"][message.text]})
-        await state.set_state(BotState.weight)
+        await state.set_state(BotState.weights)
         await message.answer(t("choose", lang), reply_markup=weight_rkb(t, lang))
 
     elif message.text == t("b.add", lang):
@@ -66,7 +70,7 @@ async def add_weight(name: str, document: Document, app: App, t: Translator, lan
         await app.bot.download(document.file_id, weight_path)
     except Exception as e:
         _ = e
-        return t("weights.download_error", lang)
+        return t("download_error", lang)
 
     try:
         weight = Weight(weight_path)
@@ -105,3 +109,59 @@ async def weights_add_file_handler(message: Message, state: FSMContext, t: Trans
             await message.answer(error_msg)
     else:
         await message.answer("❗️" + t("weights.send_file", lang))
+
+
+
+@weight_router.message(BotState.weights)
+async def weights_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await to_weights(message, state, t, lang, app)
+
+    elif message.text == t("b.rename", lang):
+        await message.answer(t("weights.enter_name", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.weights_change_name)
+
+    elif message.text == t("b.delete", lang):
+        await message.answer(t("sure_delete", lang), reply_markup=confirm_delete_rkb(t, lang))
+        await state.set_state(BotState.weights_delete)
+
+    elif message.text == t("b.test", lang):
+        await state.set_state(BotState.weights_test)
+        await state.update_data({"confidence": 0.25, "iou": 0.7})
+        await message.answer(t("weights.send_photo", lang), reply_markup=back_rkb(t, lang))
+
+    else:
+        await message.answer(t("choose", lang))
+
+
+def test_weights(image: BinaryIO, weights_path: str | Path, confidence: float = 0.25, iou: float = 0.7) -> bytes | None:
+    try:
+        weights = Weight(weights_path, confidence=confidence, iou=iou)
+        result = weights.detect(weights.to_numpy(image.read()))
+        return weights.from_numpy(result)
+
+    except Exception as e:
+        _ = e
+        return None
+
+@weight_router.message(BotState.weights_test)
+async def weights_test(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.weights)
+        await message.answer(t("choose", lang), reply_markup=weight_rkb(t, lang))
+
+    elif message.photo:
+        data = await state.get_data()
+        await message.answer(t("loading", lang))
+        try:
+            photo = await app.bot.download(message.photo[-1].file_id)
+            async with app.db.session() as db:
+                weights_db = await db.weight.get(data["weight_id"])
+                weights_path = weights_db.path
+
+            result = await asyncio.to_thread(test_weights, photo, weights_path, )
+            await message.answer_photo(BufferedInputFile(result, "picture.jpg"))
+
+        except Exception as e:
+            _ = e
+            await message.answer(t("test_error", lang))

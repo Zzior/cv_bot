@@ -28,6 +28,19 @@ class Weight:
     def get_classes(self) -> dict[int, str]:
         return self.model.names
 
+    @staticmethod
+    def to_numpy(image: bytes) -> np.ndarray:
+        image_array = np.frombuffer(image, np.uint8)
+        return cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+    @staticmethod
+    def from_numpy(image: np.ndarray, ext: str = ".jpg") -> bytes | None:
+        status, jpeg = cv2.imencode(ext, image)
+        if status:
+            return jpeg.tobytes()
+        else:
+            return None
+
     def detect(self, image: np.ndarray) -> np.ndarray:
         frame = image.copy()
         outputs = self.model.predict(frame, verbose=False, iou=self.iou, conf=self.confidence)

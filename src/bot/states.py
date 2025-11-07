@@ -17,10 +17,13 @@ class BotState(StatesGroup):
     camera_confirm_change_roi = State()
     camera_change_fps = State()
 
-    weight = State()
+    weights = State()
     weights_list = State()
     weights_add_name = State()
     weights_add_file = State()
+    weights_change_name = State()
+    weights_delete = State()
+    weights_test = State()
 
     task = State()
 
