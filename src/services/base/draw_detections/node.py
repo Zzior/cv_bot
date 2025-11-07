@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 
-from .conf import DrawDetectionConf
+from .conf import DrawDetectionsConf
 
 
 class DrawDetections:
-    def __init__(self, params: DrawDetectionConf):
+    def __init__(self, params: DrawDetectionsConf):
         self.params = params
 
     def draw(

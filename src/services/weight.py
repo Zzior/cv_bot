@@ -6,7 +6,7 @@ import numpy as np
 from ultralytics import YOLO
 
 from services.base.draw_detections.node import DrawDetections
-from services.base.draw_detections.conf import DrawDetectionConf
+from services.base.draw_detections.conf import DrawDetectionsConf
 
 
 class Weight:
@@ -18,7 +18,7 @@ class Weight:
     ) -> None:
         self.path = path
         self.model = YOLO(self.path)
-        self.draw = DrawDetections(DrawDetectionConf(classes_names=self.get_classes()))
+        self.draw = DrawDetections(DrawDetectionsConf(classes_names=self.get_classes()))
 
         self.iou = iou
         self.confidence = confidence

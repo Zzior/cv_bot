@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class DrawDetectionConf(BaseModel):
+class DrawDetectionsConf(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     classes_names: dict[int, str] = Field(default_factory=dict)
