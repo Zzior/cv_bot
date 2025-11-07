@@ -260,7 +260,7 @@ async def camera_delete_handler(message: Message, state: FSMContext, t: Translat
         await state.set_state(BotState.camera)
         await message.answer(t("choose", lang), reply_markup=camera_rkb(t, lang))
 
-    elif message.text:
+    elif message.text == t("b.delete", lang):
         data = await state.get_data()
         async with app.db.session() as db:
             await db.camera.delete(data["camera_id"])
@@ -268,7 +268,7 @@ async def camera_delete_handler(message: Message, state: FSMContext, t: Translat
         await to_cameras(message, state, t, lang, app, msg=t("deleted", lang))
 
     else:
-        await message.answer(t("cameras.enter_name", lang))
+        await message.answer(t("choose", lang))
 
 
 @camera_router.message(BotState.camera_change_fps)
@@ -309,10 +309,7 @@ async def camera_change_fps_handler(message: Message, state: FSMContext, t: Tran
         await message.answer("❗️" + t("cameras.enter_source", lang))
 
 
-async def camera_roi_picture(
-        message: Message, t: Translator, lang: str, app: App,
-        source: str, roi: list[list[int]]
-) -> None:
+async def camera_roi_picture(message: Message, t: Translator, lang: str, source: str, roi: list[list[int]]) -> None:
     await message.answer(t("loading", lang))
 
     camera = Camera(source, roi)
@@ -364,7 +361,7 @@ async def camera_change_roi_handler(message: Message, state: FSMContext, t: Tran
             roi = db_camera.roi
 
         if message.text == t("b.show_roi", lang):
-            await camera_roi_picture(message, t, lang, app, source, roi)
+            await camera_roi_picture(message, t, lang, source, roi)
         else:
             roi = validate_roi(message.text)
             if roi is None:
@@ -373,7 +370,7 @@ async def camera_change_roi_handler(message: Message, state: FSMContext, t: Tran
             else:
                 await state.update_data({"roi": roi})
                 await state.set_state(BotState.camera_confirm_change_roi)
-                await camera_roi_picture(message, t, lang, app, source, roi)
+                await camera_roi_picture(message, t, lang, source, roi)
                 await message.answer(t("confirm", lang), reply_markup=confirm_rkb(t, lang))
 
     else:
