@@ -60,10 +60,16 @@ TEXTS = {
     "cameras.enter_roi": "Enter the ROI\n"
                          "in the format [[int, int], [int, int], ...]",
 
+    "weights.empty": "ℹ️ You don't have any weights yet",
+    "weights.enter_name": "🔤 Enter weight name",
+    "weights.send_file": "📁 Upload weights file (max 20 MB)",
 
-    "weights.empty": "ℹ️ You don't have weights",
-    "weights.enter_name": "Enter the weight name",
-
+    "weights.exists": "❗️These weights already exist",
+    "weights.file_exists": "❗️This file already exists",
+    "weights.unsupported": "❗️Unsupported file format",
+    "weights.download_error": "❗️Download failed",
+    "weights.add_error": "❗️Failed to add weights",
+    "weights.added": "✅ Weights added successfully",
 
     "task.created": "✅ The task has been created",
     "task.canceled": "🛑 The task has been canceled",

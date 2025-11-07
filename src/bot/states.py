@@ -20,6 +20,7 @@ class BotState(StatesGroup):
     weight = State()
     weights_list = State()
     weights_add_name = State()
+    weights_add_file = State()
 
     task = State()
 
