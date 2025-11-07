@@ -4,7 +4,7 @@ from typing import BinaryIO
 
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, Document, BufferedInputFile, ReplyKeyboardRemove
+from aiogram.types import Message, Document, BufferedInputFile
 
 from ..states import BotState
 from ..navigation import to_main_menu, to_weights
@@ -134,6 +134,50 @@ async def weights_handler(message: Message, state: FSMContext, t: Translator, la
         await message.answer(t("choose", lang))
 
 
+@weight_router.message(BotState.weights_change_name)
+async def weights_change_name_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.weights)
+        await message.answer(t("choose", lang), reply_markup=weight_rkb(t, lang))
+
+    elif message.text:
+        data = await state.get_data()
+        async with app.db.session() as db:
+            exists = await db.weight.get_by_name(message.text)
+            if exists:
+                await message.answer(t("weights.exists", lang))
+                return
+
+            else:
+                weight = await db.weight.get(data["weight_id"])
+                weight.name = message.text
+
+        await state.set_state(BotState.weights)
+        await message.answer(t("changes_saved", lang), reply_markup=weight_rkb(t, lang))
+
+    else:
+        await message.answer(t("weights.enter_name", lang))
+
+
+@weight_router.message(BotState.weights_delete)
+async def weights_delete_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.weights)
+        await message.answer(t("choose", lang), reply_markup=weight_rkb(t, lang))
+
+    elif message.text == t("b.delete", lang):
+        data = await state.get_data()
+        async with app.db.session() as db:
+            weight = await db.weight.get(data["weight_id"])
+            await db.weight.delete(data["weight_id"])
+            Path(weight.path).unlink()
+
+        await to_weights(message, state, t, lang, app, msg=t("deleted", lang))
+
+    else:
+        await message.answer(t("choose", lang))
+
+
 def test_weights(image: BinaryIO, weights_path: str | Path, confidence: float = 0.25, iou: float = 0.7) -> bytes | None:
     try:
         weights = Weight(weights_path, confidence=confidence, iou=iou)
@@ -165,3 +209,6 @@ async def weights_test(message: Message, state: FSMContext, t: Translator, lang:
         except Exception as e:
             _ = e
             await message.answer(t("test_error", lang))
+
+    else:
+        await message.answer(t("weights.send_photo", lang))
