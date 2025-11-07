@@ -1,10 +1,12 @@
 from pathlib import Path
-from random import randint
 
 import cv2
 import torch
 import numpy as np
 from ultralytics import YOLO
+
+from services.base.draw_detections.node import DrawDetections
+from services.base.draw_detections.conf import DrawDetectionConf
 
 
 class Weight:
@@ -16,6 +18,7 @@ class Weight:
     ) -> None:
         self.path = path
         self.model = YOLO(self.path)
+        self.draw = DrawDetections(DrawDetectionConf(classes_names=self.get_classes()))
 
         self.iou = iou
         self.confidence = confidence
@@ -42,15 +45,11 @@ class Weight:
             return None
 
     def detect(self, image: np.ndarray) -> np.ndarray:
-        frame = image.copy()
-        outputs = self.model.predict(frame, verbose=False, iou=self.iou, conf=self.confidence)
+        outputs = self.model.predict(image, verbose=False, iou=self.iou, conf=self.confidence)
 
         detect_xyxy = outputs[0].boxes.xyxy.cpu().int().tolist()
         detect_conf = outputs[0].boxes.conf.cpu().tolist()
         detect_cls = outputs[0].boxes.cls.cpu().int().tolist()
-        for xyxy, conf, cls in zip(detect_xyxy, detect_conf, detect_cls):
-            color = (randint(0, 255), randint(0, 255), randint(0, 255))
-            cv2.rectangle(frame, (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3]), color, 2)
-            cv2.putText(frame, self.model.names[cls], (xyxy[0] + 5, xyxy[1] + 30), 0, 0.7, color, 2)
 
-        return frame
+        drawn_image = self.draw.draw(image, detect_xyxy, detect_conf, detect_cls)
+        return drawn_image
