@@ -125,7 +125,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
             camera_fps = camera.fps
         start = datetime.fromisoformat(data["start_date"])
         end = datetime.fromisoformat(data["end_date"])
-        dir_name = f"{start.year}{start.month}{start.day}_{start.hour}{start.minute}{start.second}"
+        dir_name = start.strftime("%Y%m%d_%H%M%S")
         segment_size = int(message.text)
         await app.task_manager.add_task(
             start=start,
