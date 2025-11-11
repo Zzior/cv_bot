@@ -5,7 +5,9 @@ class DrawDetectionsConf(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     classes_names: dict[int, str] = Field(default_factory=dict)
+
     show_confidence: bool = True
+    show_fps: bool = True
 
     thickness: int = 2
 
