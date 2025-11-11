@@ -46,16 +46,16 @@ class DrawDetections:
     @staticmethod
     def get_color(id_: int) -> tuple[int, int, int]:
         colors = [
-            (255, 0, 0),  # Red
-            (0, 255, 0),  # Green
-            (0, 0, 255),  # Blue
-            (255, 255, 0),  # Yellow
-            (255, 0, 255),  # Purple
-            (0, 255, 255),  # Blue
-            (255, 20, 147),  # Deep Pink
-            (255, 165, 0),  # Orange
-            (32, 178, 170),  # Light Sea
-            (148, 0, 211)  # Dark Violet
+            (0, 255, 255),   # Yellow
+            (255, 255, 0),   # Blue
+            (0, 255, 0),     # Green
+            (0, 165, 255),   # Orange
+            (170, 178, 32),  # Light Sea
+            (147, 20, 255),  # Deep Pink
+            (255, 0, 255),   # Purple
+            (0, 0, 255),     # Red
+            (211, 0, 148),   # Dark Violet
+            (255, 0, 0)      # Blue
         ]
 
         return colors[id_ % 10]
