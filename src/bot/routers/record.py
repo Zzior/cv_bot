@@ -122,6 +122,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         async with app.db.session() as db:
             camera = await db.camera.get_by_name(data["camera_name"])
             camera_source = camera.source
+            camera_roi = camera.roi
             camera_fps = camera.fps
         start = datetime.fromisoformat(data["start_date"])
         end = datetime.fromisoformat(data["end_date"])
@@ -131,7 +132,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
             start=start,
             end=end,
             conf=RecordConf(
-                reader=VideoReaderConf(source=camera_source),
+                reader=VideoReaderConf(source=camera_source, roi=camera_roi),
                 writer=VideoWriterConf(
                     fps=camera_fps,
                     save_dir=str(app.config.storage_dir / "Records" / dir_name),

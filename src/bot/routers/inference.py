@@ -141,9 +141,11 @@ async def inferences_enter_segment_handler(message: Message, state: FSMContext, 
         data = await state.get_data()
         async with app.db.session() as db:
             camera = await db.camera.get_by_name(data["camera_name"])
-            weights = await db.weight.get_by_name(data["weights_name"])
             camera_source = camera.source
+            camera_roi = camera.roi
             camera_fps = camera.fps
+
+            weights = await db.weight.get_by_name(data["weights_name"])
             weights_path = weights.path
             weights_classes = weights.classes
 
@@ -156,7 +158,7 @@ async def inferences_enter_segment_handler(message: Message, state: FSMContext, 
             start=start,
             end=end,
             conf=InferenceConf(
-                reader=VideoReaderConf(source=camera_source),
+                reader=VideoReaderConf(source=camera_source, roi=camera_roi),
                 detection=DetectionConf(weights_path=weights_path),
                 draw=DrawDetectionsConf(classes_names=weights_classes),
                 writer=VideoWriterConf(
