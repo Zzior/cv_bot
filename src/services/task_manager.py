@@ -7,14 +7,16 @@ from pydantic import Field, TypeAdapter
 
 from .base.abc.task import Task
 from .record.node import Record
+from .inference.node import Inference
 from .record.conf import RecordConf
+from .inference.conf import InferenceConf
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from database.database import DatabaseProvider
 
 TaskConf = Annotated[
-    Union[RecordConf],
+    Union[RecordConf, InferenceConf],
     Field(discriminator="kind"),
 ]
 _TASK_CONF_ADAPTER = TypeAdapter(TaskConf)
@@ -43,6 +45,9 @@ class TaskManager:
     def _build_task(conf: TaskConf) -> Task:
         if isinstance(conf, RecordConf):
             return Record(conf)
+
+        elif isinstance(conf, InferenceConf):
+            return Inference(conf)
 
         raise ValueError(f"unknown kind: {conf.kind}")
 
