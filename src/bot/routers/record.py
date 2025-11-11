@@ -32,7 +32,7 @@ async def records_handler(message: Message, state: FSMContext, t: Translator, la
         await message.answer(t("choose", lang), reply_markup=task_rkb(t, lang))
 
     elif message.text == t("b.add", lang):
-        await choose_camera(message, state, t, lang, app, BotState.records_choose_camera, to_add_camera=False)
+        await choose_camera(message, state, t, lang, app, BotState.records_choose_camera, to_add=False)
 
     else:
         await message.answer(t("choose", lang))
@@ -58,7 +58,7 @@ async def records_choose_camera_handler(message: Message, state: FSMContext, t: 
 @record_router.message(BotState.records_enter_start)
 async def records_enter_start_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
-        await choose_camera(message, state, t, lang, app, BotState.records_choose_camera, to_add_camera=False)
+        await choose_camera(message, state, t, lang, app, BotState.records_choose_camera, to_add=False)
 
     elif message.text:
         now = datetime.now().astimezone(app.config.system.tzinfo)

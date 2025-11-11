@@ -32,7 +32,7 @@ async def inferences_handler(message: Message, state: FSMContext, t: Translator,
         await message.answer(t("choose", lang), reply_markup=task_rkb(t, lang))
 
     elif message.text == t("b.add", lang):
-        await choose_camera(message, state, t, lang, app, BotState.inferences_choose_camera, to_add_camera=False)
+        await choose_camera(message, state, t, lang, app, BotState.inferences_choose_camera, to_add=False)
 
     else:
         await message.answer(t("choose", lang))
