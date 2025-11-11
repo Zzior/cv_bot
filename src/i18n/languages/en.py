@@ -89,4 +89,9 @@ TEXTS = {
 
     "records.enter_segment": "Enter the segment duration (in minutes)",
 
+    "inferences.info_frm": "<b>{id}. {camera_name}</b>\n"
+                           "weights: <b>{weights}</b>\n"
+                           "start: <b>{start}</b>\nend: <b>{end}</b>\n"
+                           "————————————\n",
+
 }

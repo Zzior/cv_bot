@@ -32,3 +32,6 @@ class BotState(StatesGroup):
     records_enter_start = State()
     records_enter_end = State()
     records_enter_segment = State()
+
+    inferences_list = State()
+    inferences_choose_camera = State()

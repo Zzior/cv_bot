@@ -5,6 +5,7 @@ from .states import BotState
 from .keyboards import main_rkb, build_rkb, back_rkb
 
 from services.record.conf import RecordConf
+from services.inference.conf import InferenceConf
 
 from app import App
 from i18n.types import Translator
@@ -92,4 +93,31 @@ async def to_records(message: Message, state: FSMContext, t: Translator, lang: s
 
     await state.set_data({"records": tasks_ids})
     await state.set_state(BotState.records_list)
+    await message.answer(msg, reply_markup=build_rkb(t, lang, tasks_ids, adjust=3, add=True))
+
+
+async def to_inferences(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    time_zone = app.config.system.tzinfo
+    msg = ""
+    tasks_ids = []
+
+    inferences = app.task_manager.get_tasks(task_type=InferenceConf.model_fields["kind"].default)
+    if inferences:
+        for inference in inferences:
+            tasks_ids.append(str(inference.task_id))
+            async with app.db.session() as db:
+                camera = await db.camera.get_by_source(inference.conf.reader.source)
+                weights = await db.weight.get_by_path(inference.conf.detection.weights_path)
+                msg += t(
+                    "inferences.info_frm", lang,
+                    id=inference.task_id, camera_name=camera.name,
+                    weights=weights.name,
+                    start=inference.start_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S"),
+                    end=inference.end_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S")
+                )
+    else:
+        msg = t("choose", lang)
+
+    await state.set_data({"inferences": tasks_ids})
+    await state.set_state(BotState.inferences_list)
     await message.answer(msg, reply_markup=build_rkb(t, lang, tasks_ids, adjust=3, add=True))

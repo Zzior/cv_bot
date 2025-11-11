@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from ..states import BotState
-from ..navigation import to_main_menu, to_records
+from ..navigation import to_main_menu, to_records, to_inferences
 
 
 from app import App
@@ -20,6 +20,10 @@ async def task_handler(
     back_to: str = data.get("back_to")
     if back_to == "to_records":
         back_func = to_records
+
+    elif back_to == "to_inferences":
+        back_func = to_inferences
+
     else:
         back_func = to_main_menu
 
