@@ -40,6 +40,10 @@ TEXTS = {
     "sure_delete": "⚠️ Are you sure you want to delete?",
     "end_cannot_be_less": "❗️The end time cannot be less than the beginning",
 
+    "enter_start_time": "Enter the start date\nFull format: YYYY-MM-DD HH:MM:SS",
+    "enter_end_time": "Enter the end date\nFull format: YYYY-MM-DD HH:MM:SS",
+    "enter_segment": "Enter the segment duration (in minutes)",
+
 
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.enter_name": "Enter the camera name",
@@ -82,12 +86,6 @@ TEXTS = {
                         "start: <b>{start}</b>\nend: <b>{end}</b>\n"
                         "————————————\n",
 
-    "records.enter_start_time": "Enter the start date\n"
-                                "Full format: YYYY-MM-DD HH:MM:SS",
-    "records.enter_end_time": "Enter the end date\n"
-                              "Full format: YYYY-MM-DD HH:MM:SS",
-
-    "records.enter_segment": "Enter the segment duration (in minutes)",
 
     "inferences.info_frm": "<b>{id}. {camera_name}</b>\n"
                            "weights: <b>{weights}</b>\n"

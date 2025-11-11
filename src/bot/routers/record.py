@@ -48,7 +48,7 @@ async def records_choose_camera_handler(message: Message, state: FSMContext, t: 
         if message.text in data["cameras"]:
             await state.update_data({"camera_name": message.text})
             await state.set_state(BotState.records_enter_start)
-            await message.answer(t("records.enter_start_time", lang), reply_markup=now_rkb(t, lang))
+            await message.answer(t("enter_start_time", lang), reply_markup=now_rkb(t, lang))
         else:
             await message.answer(t("choose_camera", lang))
     else:
@@ -72,7 +72,7 @@ async def records_enter_start_handler(message: Message, state: FSMContext, t: Tr
             if date >= now:
                 await state.update_data({"start_date": date.isoformat()})
                 await state.set_state(BotState.records_enter_end)
-                await message.answer(t("records.enter_end_time", lang), reply_markup=back_rkb(t, lang))
+                await message.answer(t("enter_end_time", lang), reply_markup=back_rkb(t, lang))
 
             else:
                 await message.answer(t("time_cannot_be_past", lang))
@@ -86,7 +86,7 @@ async def records_enter_start_handler(message: Message, state: FSMContext, t: Tr
 async def records_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
         await state.set_state(BotState.records_enter_start)
-        await message.answer(t("records.enter_start_time", lang))
+        await message.answer(t("enter_start_time", lang))
 
     elif message.text:
         now = datetime.now().astimezone(app.config.system.tzinfo)
@@ -100,7 +100,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
             elif start < date > now:
                 await state.update_data({"end_date": date.isoformat()})
                 await state.set_state(BotState.records_enter_segment)
-                await message.answer(t("records.enter_segment", lang))
+                await message.answer(t("enter_segment", lang))
 
             else:
                 await message.answer(t("time_cannot_be_past", lang))
@@ -115,7 +115,7 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
 async def records_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
         await state.set_state(BotState.records_enter_end)
-        await message.answer(t("records.enter_end_time", lang))
+        await message.answer(t("enter_end_time", lang))
 
     elif message.text and message.text.isdigit():
         data = await state.get_data()
