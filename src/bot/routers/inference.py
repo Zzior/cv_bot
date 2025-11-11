@@ -7,11 +7,13 @@ from aiogram.fsm.context import FSMContext
 from ..states import BotState
 from ..parsers import parse_date
 from ..keyboards import back_rkb, task_rkb, now_rkb
-from ..navigation import to_main_menu, to_inferences, choose_camera
+from ..navigation import to_main_menu, to_inferences, choose_camera, choose_weights
 
 from services.inference.conf import InferenceConf
+from services.base.detection.conf import DetectionConf
 from services.base.video_reader.conf import VideoReaderConf
 from services.base.video_writer.conf import VideoWriterConf
+from services.base.draw_detections.conf import DrawDetectionsConf
 
 from app import App
 from i18n.types import Translator
@@ -36,3 +38,137 @@ async def inferences_handler(message: Message, state: FSMContext, t: Translator,
 
     else:
         await message.answer(t("choose", lang))
+
+
+@inference_router.message(BotState.inferences_choose_camera)
+async def inferences_choose_camera_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await to_inferences(message, state, t, lang, app)
+
+    elif message.text:
+        data = await state.get_data()
+        if message.text in data["cameras"]:
+            await state.update_data({"camera_name": message.text})
+            await choose_weights(message, state, t, lang, app, BotState.inferences_choose_weights, to_add=False)
+
+        else:
+            await message.answer(t("choose_camera", lang))
+    else:
+        await message.answer(t("choose_camera", lang))
+
+
+@inference_router.message(BotState.inferences_choose_weights)
+async def inferences_choose_weights_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await choose_camera(message, state, t, lang, app, BotState.inferences_choose_camera, to_add=False)
+
+    elif message.text:
+        data = await state.get_data()
+        if message.text in data["weights"]:
+            await state.update_data({"weights_name": message.text})
+            await state.set_state(BotState.inferences_enter_start)
+            await message.answer(t("enter_start_time", lang), reply_markup=now_rkb(t, lang))
+
+        else:
+            await message.answer(t("choose_weights", lang))
+    else:
+        await message.answer(t("choose_weights", lang))
+
+
+@inference_router.message(BotState.inferences_enter_start)
+async def inferences_enter_start_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await choose_weights(message, state, t, lang, app, BotState.inferences_choose_weights, to_add=False)
+
+    elif message.text:
+        now = datetime.now().astimezone(app.config.system.tzinfo)
+
+        if message.text == t("b.now", lang):
+            date = now
+        else:
+            date = parse_date(message.text, tz=app.config.system.tzinfo)
+
+        if date:
+            if date >= now:
+                await state.update_data({"start_date": date.isoformat()})
+                await state.set_state(BotState.inferences_enter_end)
+                await message.answer(t("enter_end_time", lang), reply_markup=back_rkb(t, lang))
+
+            else:
+                await message.answer(t("time_cannot_be_past", lang))
+        else:
+            await message.answer(t("️incorrect_format", lang))
+    else:
+        await message.answer("❗️" + t("enter_start_time", lang))
+
+
+@inference_router.message(BotState.inferences_enter_end)
+async def inferences_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.inferences_enter_start)
+        await message.answer(t("enter_start_time", lang))
+
+    elif message.text:
+        now = datetime.now().astimezone(app.config.system.tzinfo)
+        date = parse_date(message.text, tz=app.config.system.tzinfo)
+        if date:
+            data = await state.get_data()
+            start = datetime.fromisoformat(data["start_date"])
+            if start >= date:
+                await message.answer(t("end_cannot_be_less", lang))
+
+            elif start < date > now:
+                await state.update_data({"end_date": date.isoformat()})
+                await state.set_state(BotState.inferences_enter_segment)
+                await message.answer(t("enter_segment", lang))
+
+            else:
+                await message.answer(t("time_cannot_be_past", lang))
+
+        else:
+            await message.answer(t("️incorrect_format", lang))
+    else:
+        await message.answer("❗️" + t("enter_end_time", lang))
+
+
+@inference_router.message(BotState.inferences_enter_segment)
+async def inferences_enter_segment_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.inferences_enter_end)
+        await message.answer(t("enter_end_time", lang))
+
+    elif message.text and message.text.isdigit():
+        data = await state.get_data()
+        async with app.db.session() as db:
+            camera = await db.camera.get_by_name(data["camera_name"])
+            weights = await db.weight.get_by_name(data["weights_name"])
+            camera_source = camera.source
+            camera_fps = camera.fps
+            weights_path = weights.path
+            weights_classes = weights.classes
+
+        start = datetime.fromisoformat(data["start_date"])
+        end = datetime.fromisoformat(data["end_date"])
+        dir_name = f"{start.year}{start.month}{start.day}_{start.hour}{start.minute}{start.second}"
+        segment_size = int(message.text)
+
+        await app.task_manager.add_task(
+            start=start,
+            end=end,
+            conf=InferenceConf(
+                reader=VideoReaderConf(source=camera_source),
+                detection=DetectionConf(weights_path=weights_path),
+                draw=DrawDetectionsConf(classes_names=weights_classes),
+                writer=VideoWriterConf(
+                    fps=camera_fps,
+                    save_dir=str(app.config.storage_dir / "Inferences" / dir_name),
+                    timezone=app.config.system.time_zone,
+                    segment_size=segment_size * 60
+                )
+            )
+        )
+        await message.answer(t("task.created", lang))
+        await to_inferences(message, state, t, lang, app)
+
+    else:
+        await message.answer("❗️" + t("️incorrect_format", lang))

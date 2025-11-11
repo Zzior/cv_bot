@@ -43,7 +43,7 @@ async def choose_camera(
         cameras = await db.camera.all()
         cameras_info = {camera.name: camera.id for camera in cameras}
 
-    await state.set_data({"cameras": cameras_info})
+    await state.update_data({"cameras": cameras_info})
     if cameras_info:
         await state.set_state(to_state)
         await message.answer(t("choose_camera", lang), reply_markup=build_rkb(t, lang, cameras_info.keys()))
@@ -69,6 +69,27 @@ async def to_weights(message: Message, state: FSMContext, t: Translator, lang: s
     await state.set_state(BotState.weights_list)
     await state.set_data({"weights": weights_info})
     await message.answer(msg, reply_markup=build_rkb(t, lang, weights_info.keys(), add=True))
+
+
+async def choose_weights(
+        message: Message, state: FSMContext, t: Translator, lang: str, app: App,
+        to_state: StateType, to_add: bool = False
+) -> None:
+
+    async with app.db.session() as db:
+        weights = await db.weight.all()
+        weights_info = {weight.name: weight.id for weight in weights}
+
+    await state.update_data({"weights": weights_info})
+    if weights_info:
+        await state.set_state(to_state)
+        await message.answer(t("choose_weights", lang), reply_markup=build_rkb(t, lang, weights_info.keys()))
+
+    else:
+        await message.answer(t("weights.empty", lang))
+        if to_add:
+            await state.set_state(BotState.cameras_add_name)
+            await message.answer(t("weights.enter_name", lang), reply_markup=back_rkb(t, lang))
 
 
 async def to_records(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:

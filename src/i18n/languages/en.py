@@ -34,6 +34,7 @@ TEXTS = {
     "confirm": "❇️ Confirm the changes",
     "deleted": "🗑 Successfully deleted",
     "choose_camera": "⬇️ Choose camera",
+    "choose_weights": "⬇️ Choose weights",
     "️incorrect_format": "❗️Incorrect format",
     "changes_saved": "✅ The changes are saved",
     "time_cannot_be_past": "❗️Time cannot be past",
