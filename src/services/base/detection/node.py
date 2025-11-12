@@ -1,17 +1,9 @@
-from dataclasses import dataclass
-
 import torch
 import numpy as np
 from ultralytics import YOLO
 
-from .conf import DetectionConf
+from .conf import DetectionConf, DetectionOutputs
 
-
-@dataclass
-class DetectionOutputs:
-    xyxy: list[list[int]]
-    confidence: list[float]
-    classes: list[int]
 
 class Detection:
     def __init__(self, params: DetectionConf) -> None:
