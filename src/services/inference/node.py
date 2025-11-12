@@ -80,7 +80,7 @@ class Inference(Task):
         conf_obj = InferenceConf.model_validate(conf)
 
         t_stop = TEvent()
-        img_q = Queue(maxsize=4)
+        img_q = Queue(maxsize=8)
         detect_q = Queue(maxsize=8)
 
         threads = [
@@ -103,7 +103,7 @@ class Inference(Task):
         self.process = self.ctx.Process(
             target=self.run,
             args=(self.conf.model_dump(), self.stop_event),
-            name="record_worker"
+            name="inference_worker"
         )
         self.process.start()
 
