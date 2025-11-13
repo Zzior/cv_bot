@@ -91,4 +91,7 @@ TEXTS = {
                            "weights: <b>{weights}</b>\n"
                            "start: <b>{start}</b>\nend: <b>{end}</b>\n",
 
+    "datasets.info_frm": "<b>{id}. {camera_name}</b>\n"
+                           "weights: <b>{weights}</b>\n"
+                           "start: <b>{start}</b>\nend: <b>{end}</b>\n",
 }

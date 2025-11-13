@@ -39,3 +39,6 @@ class BotState(StatesGroup):
     inferences_enter_start = State()
     inferences_enter_end = State()
     inferences_enter_segment = State()
+
+    datasets_list = State()
+    datasets_choose_camera = State()

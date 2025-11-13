@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from ..states import BotState
-from ..navigation import to_cameras, to_weights, to_records, to_inferences
+from ..navigation import to_cameras, to_weights, to_records, to_inferences, to_datasets
 
 from app import App
 from i18n.types import Translator
@@ -24,6 +24,12 @@ async def main_menu_handler(message: Message, state: FSMContext, t: Translator, 
 
     elif message.text == t("b.inference", lang):
         await to_inferences(message, state, t, lang, app)
+
+    elif message.text == t("b.dataset", lang):
+        await to_datasets(message, state, t, lang, app)
+
+    elif message.text == t("b.settings", lang):
+        await message.answer("TODO")
 
     else:
         await message.answer(t("choose", lang))
