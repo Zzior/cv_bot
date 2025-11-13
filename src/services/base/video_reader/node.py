@@ -46,6 +46,7 @@ class VideoReader:
 
     def process(self) -> Generator[np.ndarray, None, None]:
         self._connect_to_stream()
+        skipped_frames = 0
 
         try:
             while True:
@@ -57,6 +58,13 @@ class VideoReader:
 
                 if frame is None:
                     continue
+
+                if skipped_frames < self.params.skip_frames:
+                    skipped_frames += 1
+                    continue
+
+                else:
+                    skipped_frames = 0
 
                 if self.params.roi:
                     frame = frame[
