@@ -13,6 +13,7 @@ TEXTS = {
     "b.inference": "🔮 Inference",
     "b.dataset": "🧩 Dataset",
     "b.settings": "⚙️ Settings",
+    "b.parameters": "🪛 Parameters",
 
     "b.rename": "✏️ Rename",
     "b.source": "🔗 Source",
@@ -44,6 +45,9 @@ TEXTS = {
     "enter_start_time": "Enter the start date\nFull format: YYYY-MM-DD HH:MM:SS",
     "enter_end_time": "Enter the end date\nFull format: YYYY-MM-DD HH:MM:SS",
     "enter_segment": "Enter the segment duration (in minutes)",
+
+    "confirm_parameters": "❇️ Confirm parameters or\n"
+                          "🪛 Change additional parameters",
 
 
     "cameras.empty": "ℹ️ You don't have cameras",

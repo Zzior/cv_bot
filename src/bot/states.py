@@ -42,3 +42,6 @@ class BotState(StatesGroup):
 
     datasets_list = State()
     datasets_choose_camera = State()
+    datasets_enter_start = State()
+    datasets_enter_end = State()
+    datasets_confirm_params = State()

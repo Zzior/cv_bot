@@ -33,6 +33,16 @@ def confirm_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     )
 
 
+def confirm_params_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("b.confirm", lang)), KeyboardButton(text=t("b.parameters", lang))],
+            [KeyboardButton(text=t("b.back", lang))]
+        ],
+        resize_keyboard=True
+    )
+
+
 def now_rkb(t: Translator, lang: str) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text=t("b.now", lang)), KeyboardButton(text=t("b.back", lang))]],
