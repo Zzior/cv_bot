@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from services.base.detection.conf import DetectionConf
 from services.base.video_reader.conf import VideoReaderConf
@@ -13,6 +13,6 @@ class DatasetCollectorConf(BaseModel):
 
     reader: VideoReaderConf
     detection: DetectionConf | None = None
+    classes_conf: dict[int, tuple[float, float]] = Field(default_factory=dict)
 
-    classes_conf: dict[int, tuple[float, float]]
     ignore_zone_ratio: int = 10
