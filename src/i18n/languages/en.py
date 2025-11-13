@@ -84,13 +84,11 @@ TEXTS = {
 
 
     "records.info_frm": "<b>{id}. {camera_name}</b>\n"
-                        "start: <b>{start}</b>\nend: <b>{end}</b>\n"
-                        "————————————\n",
+                        "start: <b>{start}</b>\nend: <b>{end}</b>\n",
 
 
     "inferences.info_frm": "<b>{id}. {camera_name}</b>\n"
                            "weights: <b>{weights}</b>\n"
-                           "start: <b>{start}</b>\nend: <b>{end}</b>\n"
-                           "————————————\n",
+                           "start: <b>{start}</b>\nend: <b>{end}</b>\n",
 
 }

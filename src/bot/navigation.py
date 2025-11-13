@@ -108,7 +108,9 @@ async def to_records(message: Message, state: FSMContext, t: Translator, lang: s
                     id=record.task_id, camera_name=camera.name,
                     start=record.start_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S"),
                     end=record.end_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S")
-                )
+                ) + "————————————\n"
+        else:
+            msg = msg[:msg.rindex("————————————")]
     else:
         msg = t("choose", lang)
 
@@ -135,7 +137,9 @@ async def to_inferences(message: Message, state: FSMContext, t: Translator, lang
                     weights=weights.name,
                     start=inference.start_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S"),
                     end=inference.end_time.astimezone(time_zone).strftime("%Y.%m.%d %H:%M:%S")
-                )
+                ) + "————————————\n"
+        else:
+            msg = msg[:msg.rindex("————————————")]
     else:
         msg = t("choose", lang)
 
