@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from ..states import BotState
+from ..navigation import choose_weights
 from ..keyboards import back_rkb, build_rkb, confirm_params_rkb, true_false_rkb
 
 from i18n.types import Translator
@@ -11,7 +12,7 @@ params_router = Router(name="params")
 
 
 @params_router.message(BotState.params)
-async def main_menu_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+async def params_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     data = await state.get_data()
     access_params = data["access_params"]
 
@@ -19,7 +20,7 @@ async def main_menu_handler(message: Message, state: FSMContext, t: Translator, 
         await message.answer(t("choose", lang), reply_markup=confirm_params_rkb(t, lang))
         await state.set_state(data["back_state"])
 
-    if message.text not in access_params:
+    elif message.text not in access_params:
         await message.answer(t("choose", lang))
         return
 
@@ -44,8 +45,7 @@ async def main_menu_handler(message: Message, state: FSMContext, t: Translator, 
         # await state.set_state(BotState.p_iou)
 
     elif message.text == t("b.weights", lang):
-        await message.answer(t("p.TODO", lang))
-        # await state.set_state(BotState.p_weights)
+        await choose_weights(message, state, t, lang, app, BotState.p_weights, to_add=False)
 
     elif message.text == t("b.cls_conf", lang):
         await message.answer(t("p.TODO", lang))
@@ -53,7 +53,7 @@ async def main_menu_handler(message: Message, state: FSMContext, t: Translator, 
 
 
 @params_router.message(BotState.p_skip_frames)
-async def inferences_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+async def p_skip_frames_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     data = await state.get_data()
 
     if message.text == t("b.back", lang):
@@ -70,7 +70,7 @@ async def inferences_handler(message: Message, state: FSMContext, t: Translator,
 
 
 @params_router.message(BotState.p_use_roi)
-async def inferences_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+async def p_use_roi_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     data = await state.get_data()
 
     if message.text == t("b.back", lang):
@@ -89,3 +89,20 @@ async def inferences_handler(message: Message, state: FSMContext, t: Translator,
 
     else:
         await message.answer("❗️" + t("p.skip_frames", lang))
+
+
+@params_router.message(BotState.p_weights)
+async def p_weights_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text in data["weights"]:
+        await state.update_data({"weights_name": message.text})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    else:
+        await message.answer(t("choose_weights", lang))
