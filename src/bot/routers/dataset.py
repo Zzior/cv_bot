@@ -130,7 +130,7 @@ async def get_reader(data: dict, app: App) -> VideoReaderConf:
     )
 
 async def get_detector(data: dict, app: App) -> DetectionConf | None:
-    if data["weights_name"] and ["cls_conf"]:
+    if data.get("weights_name") and data.get("cls_conf"):
         async with app.db.session() as db:
             weights = await db.weight.get_by_name(data["weights_name"])
             weights_path = weights.path
