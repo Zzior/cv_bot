@@ -54,3 +54,4 @@ class BotState(StatesGroup):
     p_iou = State()
     p_weights = State()
     p_cls_conf = State()
+    p_ignore_zone = State()

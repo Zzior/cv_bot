@@ -6,6 +6,7 @@ from ..states import BotState
 from ..navigation import choose_weights
 from ..keyboards import back_rkb, build_rkb, confirm_params_rkb, true_false_rkb
 
+from app import App
 from i18n.types import Translator
 
 params_router = Router(name="params")
@@ -51,6 +52,9 @@ async def params_handler(message: Message, state: FSMContext, t: Translator, lan
         await message.answer(t("p.TODO", lang))
         # await state.set_state(BotState.p_cls_conf)
 
+    elif message.text == t("b.ignore_zone", lang):
+        await message.answer(t("p.TODO", lang))
+        # await state.set_state(BotState.p_ignore_zone)
 
 @params_router.message(BotState.p_skip_frames)
 async def p_skip_frames_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:

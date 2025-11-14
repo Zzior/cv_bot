@@ -35,6 +35,7 @@ TEXTS = {
     "b.confidence": "📗 Confidence",
     "b.iou": "📚 IOU",
     "b.cls_conf": "📖 Cls & Conf",
+    "b.ignore_zone": "⭕️ Ignore zone",
 
     "p.changed": "✅ Parameter has been changed",
     "p.skip_frames": "Enter the number of frames to skip",
