@@ -26,6 +26,16 @@ TEXTS = {
 
     "b.now": "Now",
 
+    "b.skip_frames": "⏭️ Skip Frames",
+    "b.use_roi": "🎯 Use ROI",
+
+    "b.classes": "🐶 Classes",
+    "b.confidence": "📗 Confidence",
+    "b.iou": "📚 IOU",
+    "b.cls_conf": "📖 Cls & Conf",
+
+    "p.changed": "✅ Parameter has been changed",
+    "p.skip_frames": "Enter the number of frames to skip",
 
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",

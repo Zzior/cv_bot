@@ -45,3 +45,12 @@ class BotState(StatesGroup):
     datasets_enter_start = State()
     datasets_enter_end = State()
     datasets_confirm_params = State()
+
+    params = State()
+    p_skip_frames = State()
+    p_use_roi = State()
+    p_classes = State()
+    p_confidence = State()
+    p_iou = State()
+    p_weights = State()
+    p_cls_conf = State()

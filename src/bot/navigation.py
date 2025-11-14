@@ -182,3 +182,15 @@ async def to_datasets(message: Message, state: FSMContext, t: Translator, lang: 
     await state.set_data({"datasets": tasks_ids})
     await state.set_state(BotState.datasets_list)
     await message.answer(msg, reply_markup=build_rkb(t, lang, tasks_ids, adjust=3, add=True))
+
+
+async def to_params(
+        message: Message, state: FSMContext, t, lang: str,
+        back_state: StateType, access_params: list[str]
+) -> None:
+    access_texts = []
+    for a_param in access_params:
+        access_texts.append(t(a_param, lang))
+
+    await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, access_texts))
+    await state.update_data({"access_params": access_texts, "back_state": back_state.state})
