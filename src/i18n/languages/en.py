@@ -39,6 +39,8 @@ TEXTS = {
 
     "p.changed": "✅ Parameter has been changed",
     "p.skip_frames": "Enter the number of frames to skip",
+    "p.select_weights": "❕First select the weights",
+    "p.cls_conf_info": "📝 Enter in this format",
 
     "menu": "🏠 Menu",
     "choose": "⬇️ Choose",
