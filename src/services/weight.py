@@ -18,7 +18,7 @@ class Weight:
     ) -> None:
         self.path = path
         self.model = YOLO(self.path)
-        self.draw = DrawDetections(DrawDetectionsConf(classes_names=self.get_classes()))
+        self.draw = DrawDetections(DrawDetectionsConf(classes_names=self.get_classes(), show_fps=False))
 
         self.iou = iou
         self.confidence = confidence
