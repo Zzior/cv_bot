@@ -96,7 +96,7 @@ async def p_use_roi_handler(message: Message, state: FSMContext, t: Translator, 
 
 
 @params_router.message(BotState.p_weights)
-async def p_weights_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+async def p_weights_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     data = await state.get_data()
 
     if message.text == t("b.back", lang):
@@ -104,7 +104,13 @@ async def p_weights_handler(message: Message, state: FSMContext, t: Translator, 
         await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     elif message.text in data["weights"]:
-        await state.update_data({"weights_name": message.text})
+        u_data: dict = {"weights_name": message.text}
+        if data["back_state"] == BotState.datasets_confirm_params.state:
+            async with app.db.session() as db:
+                db_weights = await db.weight.get_by_name(message.text)
+                u_data["cls_conf"] = {int(cls): [0.25, 1.0] for cls in db_weights.classes.keys()}
+
+        await state.update_data(u_data)
         await state.set_state(BotState.params)
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
