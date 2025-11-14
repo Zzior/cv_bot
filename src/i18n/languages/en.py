@@ -40,7 +40,7 @@ TEXTS = {
     "p.changed": "✅ Parameter has been changed",
     "p.skip_frames": "🔢 Enter the number of frames to skip",
     "p.ignore_zone": "⭕️ Set the ignore zone (0–99%). Detections inside this outer margin will be ignored",
-    "p.iou": "📚 Enter IoU threshold.\nLower values allow more detections to pass (even if boxes overlap poorly).\nHigher values require tighter overlap and result in fewer, more precise detections.",
+    "p.iou": "📚 Enter IoU threshold (0–1)\nLower values keep more detections; higher values require tighter overlap and reduce them",
     "p.select_weights": "❕First select the weights",
     "p.cls_conf_info": "📝 Enter in this format",
 
