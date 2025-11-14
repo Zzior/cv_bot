@@ -25,6 +25,8 @@ TEXTS = {
     "b.test": "🔬 Test",
 
     "b.now": "Now",
+    "b.true": "🟢 True",
+    "b.false": "🔴 False",
 
     "b.skip_frames": "⏭️ Skip Frames",
     "b.use_roi": "🎯 Use ROI",

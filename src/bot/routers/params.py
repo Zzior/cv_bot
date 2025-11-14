@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from ..states import BotState
-from ..keyboards import back_rkb, build_rkb, confirm_params_rkb
+from ..keyboards import back_rkb, build_rkb, confirm_params_rkb, true_false_rkb
 
 from i18n.types import Translator
 
@@ -28,8 +28,8 @@ async def main_menu_handler(message: Message, state: FSMContext, t: Translator, 
         await state.set_state(BotState.p_skip_frames)
 
     elif message.text == t("b.use_roi", lang):
-        await message.answer(t("p.TODO", lang))
-        # await state.set_state(BotState.p_use_roi)
+        await message.answer(t("choose", lang), reply_markup=true_false_rkb(t, lang))
+        await state.set_state(BotState.p_use_roi)
 
     elif message.text == t("b.classes", lang):
         await message.answer(t("p.TODO", lang))
@@ -62,6 +62,28 @@ async def inferences_handler(message: Message, state: FSMContext, t: Translator,
 
     elif message.text and message.text.isdigit():
         await state.update_data({"skip_frames": int(message.text)})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    else:
+        await message.answer("❗️" + t("p.skip_frames", lang))
+
+
+@params_router.message(BotState.p_use_roi)
+async def inferences_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text == t("b.true", lang):
+        await state.update_data({"use_roi": True})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text == t("b.false", lang):
+        await state.update_data({"use_roi": False})
         await state.set_state(BotState.params)
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
