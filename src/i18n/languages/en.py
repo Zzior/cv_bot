@@ -33,12 +33,14 @@ TEXTS = {
 
     "b.classes": "🐶 Classes",
     "b.confidence": "📗 Confidence",
-    "b.iou": "📚 IOU",
+    "b.iou": "📚 IoU",
     "b.cls_conf": "📖 Cls & Conf",
     "b.ignore_zone": "⭕️ Ignore zone",
 
     "p.changed": "✅ Parameter has been changed",
-    "p.skip_frames": "Enter the number of frames to skip",
+    "p.skip_frames": "🔢 Enter the number of frames to skip",
+    "p.ignore_zone": "⭕️ Set the ignore zone (0–99%). Detections inside this outer margin will be ignored",
+    "p.iou": "📚 Enter IoU threshold.\nLower values allow more detections to pass (even if boxes overlap poorly).\nHigher values require tighter overlap and result in fewer, more precise detections.",
     "p.select_weights": "❕First select the weights",
     "p.cls_conf_info": "📝 Enter in this format",
 

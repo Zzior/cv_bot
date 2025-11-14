@@ -54,8 +54,8 @@ async def params_handler(message: Message, state: FSMContext, t: Translator, lan
         await to_cls_conf(message, state, t, lang, app)
 
     elif message.text == t("b.ignore_zone", lang):
-        await message.answer(t("p.TODO", lang))
-        # await state.set_state(BotState.p_ignore_zone)
+        await message.answer(t("p.ignore_zone", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.p_ignore_zone)
 
 @params_router.message(BotState.p_skip_frames)
 async def p_skip_frames_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
@@ -193,5 +193,22 @@ async def p_cls_conf_handler(message: Message, state: FSMContext, t: Translator,
             await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
         else:
             await message.answer(t("️incorrect_format", lang))
+    else:
+        await message.answer(t("️incorrect_format", lang))
+
+
+@params_router.message(BotState.p_ignore_zone)
+async def p_ignore_zone_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text and message.text.isdigit() and 0 <= int(message.text) <= 99:
+        await state.update_data({"ignore_zone_ratio": int(message.text)})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
     else:
         await message.answer(t("️incorrect_format", lang))
