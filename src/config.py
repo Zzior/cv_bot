@@ -3,7 +3,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from sqlalchemy.engine import URL
 
@@ -35,6 +35,8 @@ class DatabaseConfig:
 @dataclass
 class BotConfig:
     token: str = getenv("BOT_TOKEN")
+    log_chat_id: str = getenv("LOG_CHAT_ID")
+    user_ids: list[int] = field(default_factory=lambda: [int(x) for x in getenv("USER_IDS", "").split()])
 
 
 @dataclass

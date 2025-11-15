@@ -6,7 +6,7 @@ from i18n.i18n import I18n
 from logger import LogWriter, LogInfo
 
 from .routers import routers
-from .middlewares import AppMiddleware, LanguageMiddleware
+from .middlewares import AccessMiddleware, AppMiddleware, LanguageMiddleware
 
 def get_dispatcher(logger: LogWriter, app: App, i18n: I18n, include: Dispatcher = None) -> Dispatcher:
     dp = include if include else Dispatcher()
@@ -14,6 +14,7 @@ def get_dispatcher(logger: LogWriter, app: App, i18n: I18n, include: Dispatcher 
         dp.include_router(router)
 
     # Register middlewares
+    dp.update.middleware(AccessMiddleware(app.config.bot.user_ids))
     dp.update.middleware(AppMiddleware(app))
     dp.update.middleware(LanguageMiddleware(i18n))
 
