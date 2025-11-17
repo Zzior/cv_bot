@@ -180,7 +180,7 @@ async def datasets_confirm_params_handler(message: Message, state: FSMContext, t
             start=start,
             end=end,
             conf=DatasetCollectorConf(
-                save_dir=str(app.config.storage_dir / "Datasets" / dir_name),
+                save_dir=str(app.config.paths.datasets / dir_name),
                 reader=reader,
                 detection=detection,
                 classes_conf=data.get("cls_conf") or {},

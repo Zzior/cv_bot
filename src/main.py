@@ -18,11 +18,12 @@ from app import App, set_app
 
 
 background_tasks = []
+config.paths.create_folders()
 
 
 async def main():
     bot = Bot(token=config.bot.token, default=DefaultBotProperties(parse_mode="HTML"))
-    logger = LogWriter(config.storage_dir / "logs" / "bot.log")
+    logger = LogWriter(config.paths.logs / "bot.log")
     db = DatabaseProvider(config.db.build_connection_str())
     task_manager = TaskManager(db)
     i18n = I18n(

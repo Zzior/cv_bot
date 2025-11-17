@@ -163,7 +163,7 @@ async def inferences_enter_segment_handler(message: Message, state: FSMContext, 
                 draw=DrawDetectionsConf(classes_names=weights_classes),
                 writer=VideoWriterConf(
                     fps=camera_fps,
-                    save_dir=str(app.config.storage_dir / "Inferences" / dir_name),
+                    save_dir=str(app.config.paths.inferences / dir_name),
                     timezone=app.config.system.time_zone,
                     segment_size=segment_size * 60
                 )

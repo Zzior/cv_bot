@@ -57,7 +57,7 @@ async def weights_add_name_handler(message: Message, state: FSMContext, t: Trans
 
 
 async def add_weight(name: str, document: Document, app: App, t: Translator, lang: str) -> str | None:
-    weight_path = app.config.storage_dir / "Weights" / document.file_name
+    weight_path = app.config.paths.weights / document.file_name
     if weight_path.exists():
         return t("weights.file_exists", lang)
 

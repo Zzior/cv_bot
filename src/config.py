@@ -50,9 +50,24 @@ class SystemConfig:
 
 
 @dataclass
+class PathsConfig:
+    project: Path = Path(__file__).parent.parent
+    storage: Path = project / "storage"
+
+    logs: Path = storage / "Logs"
+    datasets: Path = storage / "Datasets"
+    inferences: Path = storage / "Inferences"
+    records: Path = storage / "Records"
+    weights: Path = storage / "Weights"
+
+    def create_folders(self):
+        for folder in (self.logs, self.datasets, self.inferences, self.records, self.weights):
+            folder.mkdir(parents=True, exist_ok=True)
+
+
+@dataclass
 class Config:
-    project_dir = project_dir
-    storage_dir = project_dir / "storage"
+    paths = PathsConfig()
     system = SystemConfig()
     db = DatabaseConfig()
     bot = BotConfig()
