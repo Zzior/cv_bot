@@ -12,7 +12,7 @@ load_dotenv(project_dir / ".env")
 
 @dataclass
 class DatabaseConfig:
-    name: str | None = getenv("POSTGRES_DATABASE")
+    name: str | None = getenv("POSTGRES_DB")
     user: str | None = getenv("POSTGRES_USER")
     passwd: str | None = getenv("POSTGRES_PASSWORD", None)
     port: int = int(getenv("POSTGRES_PORT", 5432))
