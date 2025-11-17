@@ -1,0 +1,50 @@
+services:
+  cv_bot:
+    build: .
+    restart: always
+    container_name: cv_bot
+    volumes:
+      - ./:/app  # dev mode
+      - ./storage:/app/storage
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - app_network
+    env_file:
+      - ./.env
+
+  cv_bot_db:
+    container_name: cv_bot_db
+    image: postgres:18.1
+    restart: always
+    volumes:
+      - ./docker_storage/postgres:/var/lib/postgresql
+      - ./docker_storage/init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
+    networks:
+      - app_network
+    env_file:
+      - .env
+
+  cv_bot_fb:
+    image: filebrowser/filebrowser:v2.31.2-s6
+    container_name: cv_bot_fb
+    environment:
+      - FB_ROOT=/srv
+      - FB_PORT=8080
+      - TZ=Asia/Tashkent
+    volumes:
+      - ./storage:/srv
+      - ./docker_storage/filebrowser:/database
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+networks:
+  app_network:
+    driver: bridge
