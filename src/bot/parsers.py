@@ -31,7 +31,8 @@ def parse_date(text: str, tz: tzinfo | None = None) -> datetime | None:
             if "%Y %m %d" not in fmt:
                 dt = dt.replace(year=now.year, month=now.month, day=now.day)
 
-            return dt.astimezone(tz=tz)
+            dt.replace(tzinfo=tz)
+            return dt
         except ValueError:
             continue
     return None
