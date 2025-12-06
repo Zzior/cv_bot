@@ -106,7 +106,7 @@ async def inferences_enter_start_handler(message: Message, state: FSMContext, t:
 async def inferences_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
         await state.set_state(BotState.inferences_enter_start)
-        await message.answer(t("enter_start_time", lang))
+        await message.answer(t("enter_start_time", lang), reply_markup=now_rkb(t, lang))
 
     elif message.text:
         now = datetime.now().astimezone(app.config.system.tzinfo)
