@@ -8,4 +8,4 @@ class VideoReaderConf(BaseModel):
     skip_frames: int = 0
     roi: list[list[int]] = Field(default_factory=list)
 
-    reconnect_delay = 1.0
+    reconnect_delay: float | int = 1.0
