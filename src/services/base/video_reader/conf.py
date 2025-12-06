@@ -7,3 +7,5 @@ class VideoReaderConf(BaseModel):
     source: str
     skip_frames: int = 0
     roi: list[list[int]] = Field(default_factory=list)
+
+    reconnect_delay = 1.0

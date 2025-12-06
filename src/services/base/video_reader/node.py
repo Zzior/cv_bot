@@ -1,3 +1,4 @@
+import time
 from typing import Generator
 
 import cv2
@@ -53,6 +54,7 @@ class VideoReader:
                 ret, frame = self.capture.read()
 
                 if not ret:
+                    time.sleep(self.params.reconnect_delay)
                     self._connect_to_stream()
                     continue
 
