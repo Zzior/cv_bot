@@ -146,8 +146,7 @@ async def camera_handler(message: Message, state: FSMContext, t: Translator, lan
         await state.set_state(BotState.camera_change_name)
 
     elif message.text == t("b.source", lang):
-        await message.answer(t("cameras.enter_source", lang), reply_markup=back_rkb(t, lang))
-        await state.set_state(BotState.camera_change_source)
+        await camera_source(message, state, t, lang, app)
 
     elif message.text == t("b.delete", lang):
         await message.answer(t("sure_delete", lang), reply_markup=confirm_delete_rkb(t, lang))
@@ -222,6 +221,16 @@ async def camera_change_name_handler(message: Message, state: FSMContext, t: Tra
 
     else:
         await message.answer(t("cameras.enter_name", lang))
+
+
+async def camera_source(message: Message, state: FSMContext, t: Translator, lang: str, app: App):
+    data = await state.get_data()
+    async with app.db.session() as db:
+        camera = await db.camera.get(data["camera_id"])
+        camera_src = camera.source
+
+    await message.answer(t("cameras.change_source", lang, source=camera_src), reply_markup=back_rkb(t, lang))
+    await state.set_state(BotState.camera_change_source)
 
 
 @camera_router.message(BotState.camera_change_source)

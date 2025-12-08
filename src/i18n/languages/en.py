@@ -70,6 +70,8 @@ TEXTS = {
     "cameras.empty": "ℹ️ You don't have cameras",
     "cameras.enter_name": "Enter the camera name",
     "cameras.enter_source": "Enter the camera source",
+    "cameras.change_source": "🔗 Current source:\n<span class=\"tg-spoiler\">{source}</span>\n\n"
+                             "ℹ️ To change it, enter source",
     "cameras.enter_fps": "Enter the camera FPS or use auto-detection",
     "cameras.detecting_fps": "Detecting FPS ...",
     "cameras.enter_fps_detected": "Detected {fps} FPS",
