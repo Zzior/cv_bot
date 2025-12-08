@@ -4,7 +4,6 @@ services:
     restart: always
     container_name: cv_bot
     volumes:
-      - ./:/app  # dev mode
       - ./storage:/app/storage
 
     deploy:
