@@ -31,7 +31,7 @@ class BotState(StatesGroup):
     records_choose_camera = State()
     records_enter_start = State()
     records_enter_end = State()
-    records_enter_segment = State()
+    records_confirm_params = State()
 
     inferences_list = State()
     inferences_choose_camera = State()
@@ -55,3 +55,6 @@ class BotState(StatesGroup):
     p_weights = State()
     p_cls_conf = State()
     p_ignore_zone = State()
+    p_segment_size = State()
+    p_bitrate = State()
+    p_fps = State()

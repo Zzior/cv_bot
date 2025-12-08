@@ -6,8 +6,8 @@ from aiogram.fsm.context import FSMContext
 
 from ..states import BotState
 from ..parsers import parse_date
-from ..keyboards import back_rkb, task_rkb, now_rkb
-from ..navigation import to_main_menu, to_records, choose_camera
+from ..keyboards import back_rkb, task_rkb, now_rkb, confirm_params_rkb
+from ..navigation import to_main_menu, to_records, choose_camera, to_params
 
 from services.record.conf import RecordConf
 from services.base.video_reader.conf import VideoReaderConf
@@ -99,8 +99,8 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
 
             elif start < date > now:
                 await state.update_data({"end_date": date.isoformat()})
-                await state.set_state(BotState.records_enter_segment)
-                await message.answer(t("enter_segment", lang))
+                await state.set_state(BotState.records_confirm_params)
+                await message.answer(t("confirm_parameters", lang), reply_markup=confirm_params_rkb(t, lang))
 
             else:
                 await message.answer(t("time_cannot_be_past", lang))
@@ -111,33 +111,43 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         await message.answer("❗️" + t("enter_end_time", lang))
 
 
-@record_router.message(BotState.records_enter_segment)
-async def records_enter_end_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
+@record_router.message(BotState.records_confirm_params)
+async def records_confirm_params_handler(message: Message, state: FSMContext, t: Translator, lang: str, app: App) -> None:
     if message.text == t("b.back", lang):
         await state.set_state(BotState.records_enter_end)
-        await message.answer(t("enter_end_time", lang))
+        await message.answer(t("enter_end_time", lang), reply_markup=back_rkb(t, lang))
 
-    elif message.text and message.text.isdigit():
+    elif message.text == t("b.parameters", lang):
+        await state.set_state(BotState.params)
+        await to_params(
+            message, state, t, lang,
+            BotState.records_confirm_params,
+            access_params=["b.segment_size", "b.bitrate", "b.fps"]
+        )
+
+    elif message.text == t("b.confirm", lang):
         data = await state.get_data()
         async with app.db.session() as db:
             camera = await db.camera.get_by_name(data["camera_name"])
             camera_source = camera.source
             camera_roi = camera.roi
             camera_fps = camera.fps
+
         start = datetime.fromisoformat(data["start_date"])
         end = datetime.fromisoformat(data["end_date"])
         dir_name = start.strftime("%Y%m%d_%H%M%S")
-        segment_size = int(message.text)
+
         await app.task_manager.add_task(
             start=start,
             end=end,
             conf=RecordConf(
                 reader=VideoReaderConf(source=camera_source, roi=camera_roi),
                 writer=VideoWriterConf(
-                    fps=camera_fps,
+                    fps=data.get("fps", camera_fps),
                     save_dir=str(app.config.paths.records / dir_name),
                     timezone=app.config.system.time_zone,
-                    segment_size=segment_size * 60
+                    segment_size=data.get("segment_size", VideoWriterConf.model_fields["segment_size"].default),
+                    bitrate=data.get("bitrate", VideoWriterConf.model_fields["bitrate"].default),
                 )
             )
         )
@@ -145,4 +155,4 @@ async def records_enter_end_handler(message: Message, state: FSMContext, t: Tran
         await to_records(message, state, t, lang, app)
 
     else:
-        await message.answer("❗️" + t("️incorrect_format", lang))
+        await message.answer(t("choose", lang))

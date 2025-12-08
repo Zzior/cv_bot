@@ -57,6 +57,19 @@ async def params_handler(message: Message, state: FSMContext, t: Translator, lan
         await message.answer(t("p.ignore_zone", lang), reply_markup=back_rkb(t, lang))
         await state.set_state(BotState.p_ignore_zone)
 
+    elif message.text == t("b.segment_size", lang):
+       await message.answer(t("p.segment_size", lang), reply_markup=back_rkb(t, lang))
+       await state.set_state(BotState.p_segment_size)
+
+    elif message.text == t("b.bitrate", lang):
+        await message.answer(t("p.bitrate", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.p_bitrate)
+
+    elif message.text == t("b.fps", lang):
+        await message.answer(t("p.fps", lang), reply_markup=back_rkb(t, lang))
+        await state.set_state(BotState.p_fps)
+
+
 @params_router.message(BotState.p_skip_frames)
 async def p_skip_frames_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
     data = await state.get_data()
@@ -229,3 +242,54 @@ async def p_iou_handler(message: Message, state: FSMContext, t: Translator, lang
 
     else:
         await message.answer(t("️incorrect_format", lang))
+
+
+@params_router.message(BotState.p_segment_size)
+async def p_segment_size_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text and message.text.isdigit():
+        await state.update_data({"segment_size": int(message.text)})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    else:
+        await message.answer("❗️" + t("p.skip_frames", lang))
+
+
+@params_router.message(BotState.p_bitrate)
+async def p_bitrate_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text and message.text.isdigit():
+        await state.update_data({"bitrate": int(message.text)})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    else:
+        await message.answer("❗️" + t("p.skip_frames", lang))
+
+
+@params_router.message(BotState.p_fps)
+async def p_fps_handler(message: Message, state: FSMContext, t: Translator, lang: str) -> None:
+    data = await state.get_data()
+
+    if message.text == t("b.back", lang):
+        await state.set_state(BotState.params)
+        await message.answer(t("choose", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    elif message.text and message.text.isdigit():
+        await state.update_data({"fps": int(message.text)})
+        await state.set_state(BotState.params)
+        await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
+
+    else:
+        await message.answer("❗️" + t("p.skip_frames", lang))
