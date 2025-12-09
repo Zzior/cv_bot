@@ -84,7 +84,7 @@ async def p_skip_frames_handler(message: Message, state: FSMContext, t: Translat
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     else:
-        await message.answer("❗️" + t("p.skip_frames", lang))
+        await message.answer(t("p.skip_frames", lang))
 
 
 @params_router.message(BotState.p_use_roi)
@@ -106,7 +106,7 @@ async def p_use_roi_handler(message: Message, state: FSMContext, t: Translator, 
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     else:
-        await message.answer("❗️" + t("p.skip_frames", lang))
+        await message.answer(t("choose", lang))
 
 
 @params_router.message(BotState.p_weights)
@@ -258,7 +258,7 @@ async def p_segment_size_handler(message: Message, state: FSMContext, t: Transla
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     else:
-        await message.answer("❗️" + t("p.skip_frames", lang))
+        await message.answer(t("p.segment_size", lang))
 
 
 @params_router.message(BotState.p_bitrate)
@@ -275,7 +275,7 @@ async def p_bitrate_handler(message: Message, state: FSMContext, t: Translator, 
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     else:
-        await message.answer("❗️" + t("p.skip_frames", lang))
+        await message.answer(t("p.bitrate", lang))
 
 
 @params_router.message(BotState.p_fps)
@@ -292,4 +292,4 @@ async def p_fps_handler(message: Message, state: FSMContext, t: Translator, lang
         await message.answer(t("p.changed", lang), reply_markup=build_rkb(t, lang, data["access_params"]))
 
     else:
-        await message.answer("❗️" + t("p.skip_frames", lang))
+        await message.answer(t("p.fps", lang))
